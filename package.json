@@ -1,0 +1,20 @@
+{
+  "name": "etuedt",
+  "version": "1.0.0",
+  "description": "A Node.js app using [Express 4](http://expressjs.com/).",
+  "main": "apps.js",
+  "dependencies": {
+    "async": "^2.6.1",
+    "body-parser": "^1.18.3",
+    "cron": "^1.6.0",
+    "cronjob": "^0.1.0",
+    "express": "^4.16.4",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node apps.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

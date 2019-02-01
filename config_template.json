@@ -1,0 +1,8 @@
+{
+    "port": 3005,
+    "edt": [{
+        "name": "",
+        "account": "<etupass>@etu.unicaen.fr",
+        "zmToken": ""
+    }]
+}

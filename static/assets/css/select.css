@@ -1,0 +1,19 @@
+body {
+    text-align: center;
+}
+
+.title {
+    font-size: 20px;
+}
+
+.w3-btn {
+    font-size: 26px;
+    display: block;
+    margin-bottom: 0.5vh;
+}
+
+#btnList {
+    width: 20vw;
+    margin: auto;
+    margin-bottom: 2vh;
+}
