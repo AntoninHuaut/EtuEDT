@@ -61,17 +61,21 @@ function reloadEDT() {
 		count: 0
 	};
 	let date = new Date();
-
+	
 	async.map(config.edt, httpGet, function (err, res) {
 		if (err) return console.log(err);
-
+		
 		for (let i = 0; i < res.length; i++) {
 			tmpCache.count += 1;
-			tmpCache[i] = {
-				'edtName': config.edt[i].name,
-				'lastUpdate': date,
-				'edtData': res[i]
-			};
+
+			if (res[i].includes('HTTP ERROR') && !!cache[i])
+				tmpCache[i] = cache[i];
+			else
+				tmpCache[i] = {
+					'edtName': config.edt[i].name,
+					'lastUpdate': date,
+					'edtData': res[i]
+				};
 		}
 	});
 

@@ -27,7 +27,7 @@ function loadEDT(countTry, data) {
             window.location.assign(window.location.origin + "/");
         else
             $.get("../data/" + parseObjectFromCookie(edtCookieC).edtID).then(data => loadEDT(++countTry, data));
-    } else if (!!data.error || !data.edtData)
+    } else if (!!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
         setTimeout(() => loadEDT(countTry), 500);
     else {
         document.title = "EDT : " + data.edtName + " Informatique";
@@ -62,7 +62,7 @@ function loadCalendar(events) {
         timeFormat: "HH:mm",
         titleFormat: "DD MMMM YYYY",
         defaultView: 'agendaWeek',
-        defaultDate: new Date(),
+        defaultDate: getDefaultDate(),
         navLinks: true,
         eventLimit: true,
         displayEventEnd: true,
@@ -91,6 +91,15 @@ function loadCalendar(events) {
     });
 
     document.getElementById("load").setAttribute("style", "display: none");
+}
+
+function getDefaultDate() {
+    let date = moment(new Date());
+
+    if (date.isoWeekday() >= 6)
+        date = date.add(8 - date.isoWeekday(), 'days');
+
+    return date;
 }
 
 function getColorMatiere(mat) {
