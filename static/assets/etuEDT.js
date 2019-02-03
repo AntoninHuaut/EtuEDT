@@ -32,6 +32,7 @@ function loadEDT(countTry, data) {
     else {
         document.title = "EDT : " + data.edtName + " Informatique";
         $('#update')[0].innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
+        $('#edtName')[0].innerHTML = 'EDT : ' + data.edtName;
 
         let events = $.map(new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent"), function (item) {
             if (item.getFirstPropertyValue("class") == "PRIVATE") {

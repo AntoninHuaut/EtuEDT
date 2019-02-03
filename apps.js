@@ -33,6 +33,16 @@ app.use('/data/:edtID?', function (req, res, next) {
 		res.send(cache[edtID]);
 });
 
+app.use("/edt/:edtID", function (req, res, next) {
+	let edtID = req.params.edtID;
+	if (!edtID)
+		res.redirect('/');
+	else {
+		res.cookie('edtCookie', JSON.stringify(JSON.parse('{"edtID": ' + edtID + '}')));
+		res.redirect('/edt');
+	}
+});
+
 app.use("/edt", function (req, res, next) {
 	res.sendFile(__dirname + '/static/edt.html');
 });
@@ -72,10 +82,12 @@ function httpGet(confEl, callback) {
 	const options = {
 		method: 'GET',
 		url: 'https://webmail.unicaen.fr/home/' + confEl.account + '/Emploi%20du%20temps',
+		headers: {
+			"Authorization": confEl.basicToken
+		},
 		qs: {
-			auth: 'qp',
-			fmt: 'ics',
-			zauthtoken: confEl.zmToken
+			auth: 'ba',
+			fmt: 'ics'
 		}
 	};
 	request(options,

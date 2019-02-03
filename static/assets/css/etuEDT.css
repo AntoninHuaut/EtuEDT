@@ -1,3 +1,18 @@
+#edtInfos {
+    text-align: center;
+    position: relative;
+    font-size: 115%;
+    font-weight: 450;
+}
+
+#edtNameDiv {
+    position: absolute;
+}
+
+#update {
+    display: inline-block;
+}
+
 #load h1 {
     position: absolute;
     left: 50%;

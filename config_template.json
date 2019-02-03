@@ -3,6 +3,6 @@
     "edt": [{
         "name": "",
         "account": "<etupass>@etu.unicaen.fr",
-        "zmToken": ""
+        "basicToken": "Basic "
     }]
 }
