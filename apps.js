@@ -2,7 +2,6 @@ const async = require('async');
 const express = require("express");
 const bodyParser = require('body-parser');
 const request = require("request");
-const CronJob = require('cron').CronJob;
 const config = require('./config.json');
 
 const app = express();
@@ -35,7 +34,7 @@ app.use('/data/:edtID?', function (req, res, next) {
 
 app.use("/edt/:edtID", function (req, res, next) {
 	let edtID = req.params.edtID;
-	if (!edtID)
+	if (!edtID || !cache[edtID] || edtID == "count")
 		res.redirect('/');
 	else {
 		res.cookie('edtCookie', JSON.stringify(JSON.parse('{"edtID": ' + edtID + '}')));
@@ -52,7 +51,7 @@ app.use("/", function (req, res, next) {
 });
 
 reloadEDT();
-new CronJob('0 0 */1 * * *', reloadEDT, null, false, 'Europe/Paris');
+setInterval(reloadEDT, 15 * 60* 1000);
 
 app.listen(config.port);
 
@@ -60,15 +59,16 @@ function reloadEDT() {
 	let tmpCache = {
 		count: 0
 	};
+
 	let date = new Date();
-	
+
 	async.map(config.edt, httpGet, function (err, res) {
 		if (err) return console.log(err);
-		
+
 		for (let i = 0; i < res.length; i++) {
 			tmpCache.count += 1;
 
-			if (res[i].includes('HTTP ERROR') && !!cache[i])
+			if (res[i].includes('HTTP ERROR') && !!cache[i] && cache[i].hasOwnProperty("edtData"))
 				tmpCache[i] = cache[i];
 			else
 				tmpCache[i] = {
@@ -77,9 +77,9 @@ function reloadEDT() {
 					'edtData': res[i]
 				};
 		}
-	});
 
-	cache = tmpCache;
+		cache = tmpCache;
+	});
 }
 
 function httpGet(confEl, callback) {
