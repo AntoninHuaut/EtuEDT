@@ -13,10 +13,10 @@ loadEDT(0);
 
 function loadEDT(countTry, data) {
     if (countTry > 1)
-        $('#loadInfos')[0].innerHTML = "Essaie numéro " + countTry;
+        $('#loadInfos')[0].innerHTML = "Essai numéro " + countTry;
 
-    if (countTry >= 5) {
-        $('#loadInfos')[0].innerHTML = "Impossible de récupérer l'emploi du temps";
+    if (countTry > 5) {
+        $('#loadInfos')[0].innerHTML = "Chargement impossible...";
         setTimeout(() => {
             window.location.assign(window.location.origin + "/");
         }, 3000);

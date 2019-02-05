@@ -17,9 +17,7 @@ var cache = '{"error": "Initialization has not yet been performed"}';
 
 app.use('/data/:edtID?', function (req, res, next) {
 	let edtID = req.params.edtID;
-	if (!edtID)
-		res.send('{"error": "edtID is undefined"}');
-	else if (edtID == -1) {
+	if (!edtID) {
 		let tmpCache = JSON.parse(JSON.stringify(cache));
 		for (let i = 0; i < tmpCache.count; i++) {
 			delete tmpCache[i].lastUpdate;
@@ -51,7 +49,7 @@ app.use("/", function (req, res, next) {
 });
 
 reloadEDT();
-setInterval(reloadEDT, 15 * 60* 1000);
+setInterval(reloadEDT, 15 * 60 * 1000);
 
 app.listen(config.port);
 

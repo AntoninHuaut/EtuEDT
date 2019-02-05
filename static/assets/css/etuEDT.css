@@ -16,7 +16,7 @@
 #load h1 {
     position: absolute;
     left: 50%;
-    top: 35%;
+    top: 30%;
     z-index: 1;
     transform: translate(-50%);
 }
