@@ -14,3 +14,7 @@ const parseObjectFromCookie = (cookie) => {
 function createCookie(name, value) {
     document.cookie = name + "=" +  JSON.stringify(value) + ";path=/;expires=" + farFuture;
 }
+
+function cookieIsValid(cookie) {
+    return !(!cookie || parseObjectFromCookie(cookie).edtID == undefined || parseObjectFromCookie(cookie).soutien == undefined);
+}

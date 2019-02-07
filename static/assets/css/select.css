@@ -17,3 +17,7 @@ body {
     margin: auto;
     margin-bottom: 2vh;
 }
+
+#infosSoutien {
+    font-size: 120%;
+}

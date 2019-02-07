@@ -35,7 +35,7 @@ app.use("/edt/:edtID", function (req, res, next) {
 	if (!edtID || !cache[edtID] || edtID == "count")
 		res.redirect('/');
 	else {
-		res.cookie('edtCookie', JSON.stringify(JSON.parse('{"edtID": ' + edtID + '}')));
+		res.cookie('edtCookie', JSON.stringify(JSON.parse('{"edtID": ' + edtID + ', "soutien": true}')));
 		res.redirect('/edt');
 	}
 });

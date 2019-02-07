@@ -6,6 +6,7 @@
     <title>EDT : Sélection</title>
     <link rel="icon" type="image/png" href="https://img.icons8.com/color/64/000000/calendar.png" />
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
     <link rel="stylesheet" href="/assets/css/select.css" />
 </head>
 
@@ -15,6 +16,24 @@
 
         <div id="btnList">
 
+        </div>
+
+        <div id="soutient">
+            <label id="infosSoutien">Afficher les soutiens :</label>
+            <div class="pretty p-icon p-round">
+                <input type="radio" class="radioSoutien" name="typeSoutien" onchange="updateType(0)" />
+                <div class="state p-info">
+                    <i class="icon mdi mdi-check"></i>
+                    <label>Oui</label>
+                </div>
+            </div>
+            <div class="pretty p-icon p-round">
+                <input type="radio" class="radioSoutien" name="typeSoutien" onchange="updateType(1)" />
+                <div class="state p-info">
+                    <i class="icon mdi mdi-check"></i>
+                    <label>Non</label>
+                </div>
+            </div>
         </div>
     </div>
 </body>

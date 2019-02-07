@@ -12,6 +12,14 @@ var colorsList = randomColor({
 loadEDT(0);
 
 function loadEDT(countTry, data) {
+    let edtCookieC = getCookie('edtCookie');
+    if (!cookieIsValid(edtCookieC)) {
+        window.location.assign(window.location.origin + "/");
+        return;
+    }
+
+    let edtCookie = parseObjectFromCookie(edtCookieC);
+
     if (countTry > 1)
         $('#loadInfos')[0].innerHTML = "Essai numéro " + countTry;
 
@@ -21,12 +29,7 @@ function loadEDT(countTry, data) {
             window.location.assign(window.location.origin + "/");
         }, 3000);
     } else if (!data) {
-        let edtCookieC = getCookie('edtCookie');
-
-        if (!edtCookieC)
-            window.location.assign(window.location.origin + "/");
-        else
-            $.get("../data/" + parseObjectFromCookie(edtCookieC).edtID).then(data => loadEDT(++countTry, data));
+        $.get("../data/" + edtCookie.edtID).then(data => loadEDT(++countTry, data));
     } else if (!!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
         setTimeout(() => loadEDT(countTry), 500);
     else {
@@ -39,6 +42,10 @@ function loadEDT(countTry, data) {
                 return null;
             } else {
                 let title = convertString(item.getFirstPropertyValue("summary"));
+
+                if (title.toLowerCase().includes('soutien') && !edtCookie.soutien)
+                    return null;
+
                 return {
                     "title": title,
                     "start": item.getFirstPropertyValue("dtstart").toJSDate(),
@@ -56,23 +63,20 @@ function loadEDT(countTry, data) {
 function loadCalendar(events) {
     $('#calendar').fullCalendar('destroy');
     $('#calendar').fullCalendar({
-        locale: "fr",
-        weekends: false,
-        events: events,
-        timeFormat: "HH:mm",
-        titleFormat: "DD MMMM YYYY",
-        defaultView: 'agendaWeek',
         defaultDate: getDefaultDate(),
+        events: events,
         navLinks: true,
-        eventLimit: true,
         displayEventEnd: true,
         handleWindowResize: true,
-        aspectRatio: 1.05,
         allDaySlot: false,
+        weekends: false,
+        defaultView: 'agendaWeek',
         themeSystem: "bootstrap4",
-        showNonCurrentDates: false,
+        locale: "fr",
         minTime: "07:00:00",
         maxTime: "19:00:00",
+        timeFormat: "HH:mm",
+        titleFormat: "DD MMMM YYYY",
         eventRender: function (event, element) {
             element[0].childNodes[0].setAttribute("style", "color:black; font-weight: 600;");
             element[0].childNodes[0].childNodes[0].setAttribute("style", "font-weight: normal; font-size: 90%; font-style: italic;");
