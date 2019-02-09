@@ -38,21 +38,31 @@ function loadEDT(countTry, data) {
         $('#edtName')[0].innerHTML = 'EDT : ' + data.edtName;
 
         let events = $.map(new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent"), function (item) {
-            if (item.getFirstPropertyValue("class") == "PRIVATE") {
+            if (item.getFirstPropertyValue("class") != "PUBLIC") {
                 return null;
             } else {
-                let title = convertString(item.getFirstPropertyValue("summary"));
-
-                if (title.toLowerCase().includes('soutien') && !edtCookie.soutien)
-                    return null;
-
-                return {
-                    "title": title,
+                let data = {
+                    "title": convertString(item.getFirstPropertyValue("summary")),
+                    "enseignant": convertString(item.getFirstPropertyValue('description').split('\n')[4].replace('Enseignant : ', '')),
                     "start": item.getFirstPropertyValue("dtstart").toJSDate(),
                     "end": item.getFirstPropertyValue("dtend").toJSDate(),
-                    "location": convertString(item.getFirstPropertyValue("location")),
-                    "color": getColorMatiere(title)
+                    "location": convertString(item.getFirstPropertyValue("location"))
                 };
+
+                data.color = getColorMatiere(data.title);
+
+                if (data.title.toLowerCase().includes('soutien') && !edtCookie.soutien) {
+                    data.start = 0;
+                    data.end = 0;
+                }
+
+                if (!edtCookie.enseignant)
+                    data.enseignant = "";
+
+                if (data.location == "Amphi" && data.title.startsWith("CM "))
+                    data.location = " ";
+
+                return data;
             }
         });
 
@@ -78,11 +88,14 @@ function loadCalendar(events) {
         timeFormat: "HH:mm",
         titleFormat: "DD MMMM YYYY",
         eventRender: function (event, element) {
-            element[0].childNodes[0].setAttribute("style", "color:black; font-weight: 600;");
-            element[0].childNodes[0].childNodes[0].setAttribute("style", "font-weight: normal; font-size: 90%; font-style: italic;");
+            let el = element[0].childNodes[0];
+            el.setAttribute("style", "color:black; font-weight: 600;");
+            el.childNodes[0].setAttribute("style", "font-weight: normal; font-size: 90%; font-style: italic;");
 
-            if (event.location != null && event.location != "")
-                element[0].childNodes[0].innerHTML += ("<div style='font-weight: normal; font-size: 85%; float: right;'>" + event.location + "</div>");
+            if (event.location != null && event.location != "") {
+                el.childNodes[0].innerHTML += ("<div style='font-weight: normal; font-size: 85%; float: right;'> " + event.enseignant + "</div>");
+                el.childNodes[1].innerHTML += ("<div style='font-weight: normal; font-size: 85%; float: right;'>" + event.location + "</div>");
+            }
         },
         viewRender: function (view, element) {
             document.querySelectorAll('.fc-divider').forEach(get => get.parentElement.removeChild(get));

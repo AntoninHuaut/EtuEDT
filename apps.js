@@ -1,11 +1,13 @@
 const async = require('async');
 const express = require("express");
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
 const request = require("request");
 const config = require('./config.json');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(express.static(__dirname + '/static'));
 app.use(function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -32,10 +34,12 @@ app.use('/data/:edtID?', function (req, res, next) {
 
 app.use("/edt/:edtID", function (req, res, next) {
 	let edtID = req.params.edtID;
-	if (!edtID || !cache[edtID] || edtID == "count")
+	if (!edtID || !cache[edtID] || edtID == "count" || !req.cookies.edtCookie)
 		res.redirect('/');
 	else {
-		res.cookie('edtCookie', JSON.stringify(JSON.parse('{"edtID": ' + edtID + ', "soutien": true}')));
+		let cookieValue = JSON.parse(req.cookies.edtCookie);
+		cookieValue['edtID'] = edtID;
+		res.cookie('edtCookie', JSON.stringify(cookieValue));
 		res.redirect('/edt');
 	}
 });

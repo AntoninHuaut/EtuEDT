@@ -2,22 +2,35 @@ body {
     text-align: center;
 }
 
-.title {
-    font-size: 20px;
-}
-
-.w3-btn {
-    font-size: 26px;
+.btn-large {
     display: block;
-    margin-bottom: 0.5vh;
+    font-size: 26px;
+    margin-bottom: 10px;
 }
 
 #btnList {
-    width: 20vw;
+    width: 333px;
     margin: auto;
-    margin-bottom: 2vh;
+    margin-bottom: 30px;
 }
 
-#infosSoutien {
-    font-size: 120%;
+.infos {
+    font-size: 175%;
+    vertical-align: middle;
+}
+
+.switch {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.switch label input[type=checkbox]+.lever:after,
+.switch label input[type=checkbox]+.lever {
+    background-color: #f44336 !important;
+    transform: scale(1.1);
+}
+
+.switch label input[type=checkbox]:checked+.lever:after,
+.switch label input[type=checkbox]:checked+.lever {
+    background-color: #8bc34a !important;
 }

@@ -1,4 +1,4 @@
-var farFuture = new Date(new Date().getTime() + (1000*60*60*24*365*10)); // ~10y
+var farFuture = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 365 * 10)); // ~10y
 
 const getCookie = (name) => {
     const value = "; " + document.cookie;
@@ -12,9 +12,17 @@ const parseObjectFromCookie = (cookie) => {
 };
 
 function createCookie(name, value) {
-    document.cookie = name + "=" +  JSON.stringify(value) + ";path=/;expires=" + farFuture;
+    document.cookie = name + "=" + JSON.stringify(value) + ";path=/;expires=" + farFuture;
 }
 
 function cookieIsValid(cookie) {
-    return !(!cookie || parseObjectFromCookie(cookie).edtID == undefined || parseObjectFromCookie(cookie).soutien == undefined);
+    if (!cookie)
+        return false;
+
+    cookie = parseObjectFromCookie(cookie);
+    return !(und(cookie.edtID) || und(cookie.soutien) || und(cookie.enseignant));
+}
+
+function und(val) {
+    return val == undefined;
 }

@@ -1,25 +1,54 @@
-var color = ["red", "orange", "amber", "khaki", "lime", "light-green", "green"];
-var defaultEdtCookie = JSON.parse('{"edtID": 0, "soutien": true}');
+var color = ["red", "orange", "amber", "lime", "light-green", "green"];
+var defaultEdtCookie = JSON.parse('{"edtID": 0, "soutien": true, "enseignant": true}');
+var options = ["soutien", "enseignant"];
 
-$('document').ready(function () {
+var optTemplate = '<div id="{NAME}">' +
+    '<span class="infos">Afficher les {NAME}s :</span>' +
+    '<div class="switch">' +
+    '<label>' +
+    '<input id="{NAME}switch" onclick="updateType({NAME})" type="checkbox">' +
+    '<span class="lever"></span>' +
+    '</label>' +
+    '</div>' +
+    '</div>';
+
+$('document').ready(() => {
+    let edtCookieC = getCookie('edtCookie');
+    let cooVars = {
+        "soutien": defaultEdtCookie.soutien,
+        "enseignant": defaultEdtCookie.enseignant
+    };
+
+    if (cookieIsValid(edtCookieC)) {
+        cooVars.soutien = parseObjectFromCookie(edtCookieC).soutien;
+        cooVars.enseignant = parseObjectFromCookie(edtCookieC).enseignant;
+    } else
+        createCookie("edtCookie", defaultEdtCookie);
+
+    for (let i = 0; i < options.length; i++) {
+        let name = options[i];
+        $('#main')[0].innerHTML += optTemplate.replace(/{NAME}/g, name);
+
+        setTimeout(() => {
+            $('#' + name + 'switch')[0].checked = cooVars[name];
+        }, 1);
+    }
+
     let btnList = $('#btnList');
 
     $.get("../data", function (data) {
-        for (let i = 0; i < data.count; i++)
-            btnList.append("<div class='alphabetCheck'><btn onclick='redirectEDT(" + i + ")' class='w3-btn w3-" + getColor(i) + "'>" + data[i].edtName + "</btn></div>");
+        for (let i = 0; i < data.count; i++) {
+            btnList.append("<div class='alphabetCheck'><btn onclick='redirectEDT(" + i + ")' class='" +
+                "waves-effect waves-light btn-large " + getColor(i) + " lighten-1" +
+                "'>" + data[i].edtName + "</btn></div>");
+        }
     });
-
-    let edtCookieC = getCookie('edtCookie');
-    let soutien = defaultEdtCookie.soutien ? 0 : 1;
-    if (cookieIsValid(edtCookieC))
-        soutien = parseObjectFromCookie(edtCookieC).soutien ? 0 : 1;
-    else
-        createCookie("edtCookie", defaultEdtCookie);
-
-    $('.radioSoutien')[soutien].checked = true;
 });
 
 function updateType(value) {
+    let id = options.indexOf(value.id);
+    let isCheck = value.querySelector('input').checked;
+
     let edtCookieC = getCookie('edtCookie');
     let cookieValue;
 
@@ -28,7 +57,11 @@ function updateType(value) {
     else
         cookieValue = parseObjectFromCookie(edtCookieC);
 
-    cookieValue.soutien = value == 0;
+    if (id == 0)
+        cookieValue.soutien = isCheck;
+    else if (id == 1)
+        cookieValue.enseignant = isCheck;
+
     createCookie("edtCookie", cookieValue);
 }
 
