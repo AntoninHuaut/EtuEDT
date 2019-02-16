@@ -1,154 +1,81 @@
-var matExcluList = ['TD', 'TP', 'CM', 'CC', 'CTP'];
-var colors = {
-    increment: 0
-};
-var colorsList = randomColor({
-    count: 100,
-    seed: 96369169,
-    format: 'rgba',
-    alpha: 0.6
-});
+function loadCalendar(listEvents) {
+    let calendarEl = document.getElementById('calendar');
 
-loadEDT(0);
-
-function loadEDT(countTry, data) {
-    let edtCookieC = getCookie('edtCookie');
-    if (!cookieIsValid(edtCookieC)) {
-        window.location.assign(window.location.origin + "/");
-        return;
-    }
-
-    let edtCookie = parseObjectFromCookie(edtCookieC);
-
-    if (countTry > 1)
-        $('#loadInfos')[0].innerHTML = "Essai numéro " + countTry;
-
-    if (countTry > 5) {
-        $('#loadInfos')[0].innerHTML = "Chargement impossible...";
-        setTimeout(() => {
-            window.location.assign(window.location.origin + "/");
-        }, 3000);
-    } else if (!data) {
-        $.get("../data/" + edtCookie.edtID).then(data => loadEDT(++countTry, data));
-    } else if (!!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
-        setTimeout(() => loadEDT(countTry), 500);
-    else {
-        document.title = "EDT : " + data.edtName + " Informatique";
-        $('#update')[0].innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
-        $('#edtName')[0].innerHTML = 'EDT : ' + data.edtName;
-
-        let events = $.map(new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent"), function (item) {
-            if (item.getFirstPropertyValue("class") != "PUBLIC") {
-                return null;
-            } else {
-                let data = {
-                    "title": convertString(item.getFirstPropertyValue("summary")),
-                    "enseignant": convertString(item.getFirstPropertyValue('description').split('\n')[4].replace('Enseignant : ', '')),
-                    "start": item.getFirstPropertyValue("dtstart").toJSDate(),
-                    "end": item.getFirstPropertyValue("dtend").toJSDate(),
-                    "location": convertString(item.getFirstPropertyValue("location"))
-                };
-
-                data.color = getColorMatiere(data.title);
-
-                if (data.title.toLowerCase().includes('soutien') && !edtCookie.soutien) {
-                    data.start = 0;
-                    data.end = 0;
-                }
-
-                if (!edtCookie.enseignant)
-                    data.enseignant = "";
-
-                if (data.location == "Amphi" && data.title.startsWith("CM "))
-                    data.location = " ";
-
-                return data;
-            }
-        });
-
-        loadCalendar(events);
-    }
-}
-
-function loadCalendar(events) {
-    $('#calendar').fullCalendar('destroy');
-    $('#calendar').fullCalendar({
-        defaultDate: getDefaultDate(),
-        events: events,
-        navLinks: true,
-        displayEventEnd: true,
-        handleWindowResize: true,
-        allDaySlot: false,
+    let calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: ['dayGrid', 'timeGrid', 'bootstrap'],
+        themeSystem: 'bootstrap',
+        events: listEvents,
+        locale: 'fr',
         weekends: false,
-        defaultView: 'agendaWeek',
-        themeSystem: "bootstrap4",
-        locale: "fr",
-        minTime: "07:00:00",
-        maxTime: "19:00:00",
-        timeFormat: "HH:mm",
-        titleFormat: "DD MMMM YYYY",
-        eventRender: function (event, element) {
-            let el = element[0].childNodes[0];
-            el.setAttribute("style", "color:black; font-weight: 600;");
-            el.childNodes[0].setAttribute("style", "font-weight: normal; font-size: 90%; font-style: italic;");
-
-            if (event.location != null && event.location != "") {
-                el.childNodes[0].innerHTML += ("<div style='font-weight: normal; font-size: 85%; float: right;'> " + event.enseignant + "</div>");
-                el.childNodes[1].innerHTML += ("<div style='font-weight: normal; font-size: 85%; float: right;'>" + event.location + "</div>");
-            }
-        },
-        viewRender: function (view, element) {
-            document.querySelectorAll('.fc-divider').forEach(get => get.parentElement.removeChild(get));
-        },
         header: {
             left: 'title',
-            center: '',
-            right: 'agendaWeek,month, prev,next, today'
+            right: 'timeGridWeek,dayGridMonth, prev,next, today'
+        },
+        titleFormat: {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        },
+        defaultView: 'timeGridWeek',
+        firstDay: 1,
+
+        // TimeGrid
+        allDaySlot: false,
+        allDayText: false,
+        minTime: "07:00:00",
+        maxTime: "19:00:00",
+        nowIndicator: true,
+        //
+        // Methods
+        eventRender: function (event) {
+            let el = event.el;
+            el.style.color = 'black';
+            el.style.fontWeight = 600;
+
+            if (event.view.type == "timeGridWeek") {
+                el.childNodes[0].childNodes[0].style.fontWeight = 'bold';
+                el.childNodes[0].childNodes[0].style.fontSize = '90%';
+                el.childNodes[0].childNodes[0].style.fontStyle = 'italic';
+
+                event = event.event.extendedProps;
+                if (event.location != null && event.location != "") {
+                    el.childNodes[0].childNodes[0].childNodes[0].style.display = "inline-block";
+                    el.childNodes[0].childNodes[0].innerHTML += ("<div style='font-size: 85%; font-style: italic; float: right;'> " + event.enseignant + "</div>");
+                    el.childNodes[0].childNodes[1].innerHTML += ("<div style='font-size: 85%; font-weight: normal; float: right;'>" + event.location + "</div>");
+                }
+            } else if (event.view.type == "dayGridMonth") {
+                el = el.childNodes[0];
+                let size = el.childNodes.length;
+
+                if (size > 2) {
+                    el.querySelector('span').style.fontWeight = 'normal';
+                    el.querySelector('span').style.fontSize = '90%';
+                } else {
+                    // Fix Fullcalendar bug
+                    let mom = moment(new Date(event.event.start));
+                    let date = mom.format("HH");
+                    date += mom.format("mm") == "00" ? ' h' : ':' + mom.format("mm");
+
+                    el.innerHTML = "<span class='fc-time' style='font-weight: normal; font-size: 90%'>" + date + "</span>" + el.innerHTML;
+                }
+
+                el.querySelectorAll('span')[1].style.fontWeight = '450';
+                el.querySelectorAll('span')[1].style.fontSize = '95%';
+
+                let props = event.event.extendedProps;
+                if (props.location != null && props.location != "")
+                    el.innerHTML += "<div style='font-weight: normal; font-size: 80%; float: right;'>" + props.location + "</div>";
+            }
+        },
+        viewSkeletonRender: () => {
+            document.querySelectorAll('.fc-divider').forEach(get => get.parentElement.removeChild(get));
         }
     });
 
-    document.getElementById("load").setAttribute("style", "display: none");
-}
+    document.getElementById("load").style.display = "none";
+    calendar.render();
 
-function getDefaultDate() {
     let date = moment(new Date());
-
-    if (date.isoWeekday() >= 6)
-        date = date.add(8 - date.isoWeekday(), 'days');
-
-    return date;
-}
-
-function getColorMatiere(mat) {
-    mat = mat.replace(/ /g, '');
-    matExcluList.forEach(get => mat = mat.replace(get, ''));
-
-    if (!colors[mat]) {
-        if (colors.increment >= colorsList.length)
-            colors.increment = 0;
-
-        colors[mat] = colorsList[colors.increment++];
-    }
-
-    return colors[mat];
-}
-
-var regexCString = new RegExp('\\?\\?', 'g');
-
-function convertString(str) {
-    if (!str)
-        return str;
-
-    if (str.startsWith('Amphi'))
-        return 'Amphi';
-
-    let get = str.match(/.+?(?=_)/);
-    if (!!get)
-        str = get[0];
-
-    return str.replace(regexCString, 'e');
-}
-
-function getRandomColor() {
-    return Math.floor(Math.random() * colorsList.length);
+    while (date.isoWeekday() >= 6 && date > calendar.getDate())
+        calendar.next();
 }
