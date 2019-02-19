@@ -38,7 +38,7 @@ function loadEDT(countTry, data) {
         document.getElementById('edtName').innerHTML = 'EDT : ' + data.edtName;
 
         let eventComps = new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent");
-        
+
         let events = eventComps.map(function (item) {
             if (item.getFirstPropertyValue("class") != "PUBLIC") {
                 return null;
@@ -58,17 +58,11 @@ function loadEDT(countTry, data) {
                     data.end = 0;
                 }
 
-                if (!edtCookie.enseignant)
-                    data.enseignant = "";
-
-                if (data.location == "Amphi" && data.title.startsWith("CM "))
-                    data.location = " ";
-
                 return data;
             }
         });
 
-        loadCalendar(events);
+        loadCalendar(events, edtCookie);
     }
 }
 

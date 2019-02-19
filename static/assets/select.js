@@ -1,5 +1,5 @@
 var color = ["red", "orange", "amber", "lime", "light-green", "green"];
-var defaultEdtCookie = JSON.parse('{"edtID": 0, "soutien": true, "enseignant": true}');
+var defaultEdtCookie = JSON.parse('{"edtID": 0, "soutien": true, "enseignant": false}');
 var options = ["soutien", "enseignant"];
 
 var optTemplate = '<div id="{NAME}">' +

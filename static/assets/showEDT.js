@@ -1,4 +1,4 @@
-function loadCalendar(listEvents) {
+function loadCalendar(listEvents, edtCookie) {
     let calendarEl = document.getElementById('calendar');
 
     let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -9,7 +9,7 @@ function loadCalendar(listEvents) {
         weekends: false,
         header: {
             left: 'title',
-            right: 'timeGridWeek,dayGridMonth, prev,next, today'
+            right: 'timeGridDay,timeGridWeek,dayGridMonth, prev,next, today'
         },
         titleFormat: {
             day: 'numeric',
@@ -32,16 +32,21 @@ function loadCalendar(listEvents) {
             el.style.color = 'black';
             el.style.fontWeight = 600;
 
-            if (event.view.type == "timeGridWeek") {
+            if (event.view.type == "timeGridWeek" || event.view.type == "timeGridDay") {
                 el.childNodes[0].childNodes[0].style.fontWeight = 'bold';
                 el.childNodes[0].childNodes[0].style.fontSize = '90%';
                 el.childNodes[0].childNodes[0].style.fontStyle = 'italic';
 
+                let title = event.event.title;
                 event = event.event.extendedProps;
                 if (event.location != null && event.location != "") {
                     el.childNodes[0].childNodes[0].childNodes[0].style.display = "inline-block";
-                    el.childNodes[0].childNodes[0].innerHTML += ("<div style='font-size: 85%; font-style: italic; float: right;'> " + event.enseignant + "</div>");
-                    el.childNodes[0].childNodes[1].innerHTML += ("<div style='font-size: 85%; font-weight: normal; float: right;'>" + event.location + "</div>");
+
+                    let location = event.location == "Amphi" && title.startsWith("CM ") ? " " : event.location;
+                    let enseignant = !edtCookie.enseignant ? " " : event.enseignant;
+
+                    el.childNodes[0].childNodes[0].innerHTML += ("<div style='font-size: 85%; font-style: italic; float: right;'> " + enseignant + "</div>");
+                    el.childNodes[0].childNodes[1].innerHTML += ("<div style='font-size: 85%; font-weight: normal; float: right;'>" + location + "</div>");
                 }
             } else if (event.view.type == "dayGridMonth") {
                 el = el.childNodes[0];
@@ -50,14 +55,9 @@ function loadCalendar(listEvents) {
                 if (size > 2) {
                     el.querySelector('span').style.fontWeight = 'normal';
                     el.querySelector('span').style.fontSize = '90%';
-                } else {
+                } else
                     // Fix Fullcalendar bug
-                    let mom = moment(new Date(event.event.start));
-                    let date = mom.format("HH");
-                    date += mom.format("mm") == "00" ? ' h' : ':' + mom.format("mm");
-
-                    el.innerHTML = "<span class='fc-time' style='font-weight: normal; font-size: 90%'>" + date + "</span>" + el.innerHTML;
-                }
+                    el.innerHTML = "<span class='fc-time' style='font-weight: normal; font-size: 90%'>" + getDateWFormat(event.event.start) + "</span>" + el.innerHTML;
 
                 el.querySelectorAll('span')[1].style.fontWeight = '450';
                 el.querySelectorAll('span')[1].style.fontSize = '95%';
@@ -69,6 +69,37 @@ function loadCalendar(listEvents) {
         },
         viewSkeletonRender: () => {
             document.querySelectorAll('.fc-divider').forEach(get => get.parentElement.removeChild(get));
+        },
+        eventClick: function (info) {
+            info = info.event;
+            let msg = "<table class='popup'>" +
+                "<tr><td>Enseignant: </td> <td class='popup_marge'> " + info.extendedProps.enseignant + "</td></tr>" +
+                "<tr><td>Horaire: </td> <td class='popup_marge'> " + getDateWFormat(info.start) + " - " + getDateWFormat(info.end) + "</td></tr>" +
+                "<tr><td>Location: </td> <td class='popup_marge'> " + info.extendedProps.location + "</td></tr>" +
+                "</table>";
+
+            iziToast.show({
+                title: info.title,
+                message: msg,
+                layout: 2,
+                maxWidth: '500',
+                position: 'topCenter',
+                timeout: false,
+                titleLineHeight: '50',
+                messageLineHeight: '30',
+                titleSize: '24',
+                messageSize: '20',
+                displayMode: 1,
+                overlay: true,
+                overlayClose: true
+            });
+
+        },
+        eventMouseEnter: function (info) {
+            info.el.style.cursor = 'pointer';
+        },
+        eventMouseLeave: function (info) {
+            info.el.style.cursor = 'auto';
         }
     });
 
@@ -78,4 +109,12 @@ function loadCalendar(listEvents) {
     let date = moment(new Date());
     while (date.isoWeekday() >= 6 && date > calendar.getDate())
         calendar.next();
+}
+
+function getDateWFormat(jsDate) {
+    let mom = moment(new Date(jsDate));
+    let date = mom.format("HH");
+    date += mom.format("mm") == "00" ? ' h' : ':' + mom.format("mm");
+
+    return date;
 }

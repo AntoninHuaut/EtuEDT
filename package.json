@@ -1,7 +1,7 @@
 {
   "name": "etuedt",
   "version": "1.0.0",
-  "description": "A Node.js app using [Express 4](http://expressjs.com/).",
+  "description": "A Node.js app using [Express 4](http://expressjs.com/) and [FullCalendar v4](https://fullcalendar.io/).",
   "main": "apps.js",
   "dependencies": {
     "async": "^2.6.1",

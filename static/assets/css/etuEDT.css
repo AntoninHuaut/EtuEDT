@@ -36,6 +36,10 @@
     animation: spin 2s linear infinite;
 }
 
+.popup_marge {
+    padding-left: 15px;
+}
+
 @-webkit-keyframes spin {
     0% {
         -webkit-transform: rotate(0deg);
