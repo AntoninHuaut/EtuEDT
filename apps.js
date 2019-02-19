@@ -17,8 +17,12 @@ app.use(function (req, res, next) {
 
 var cache = '{"error": "Initialization has not yet been performed"}';
 
-app.use('/data/:edtID?', function (req, res, next) {
+app.use('/data/:edtID?/:dataOnly?', function (req, res, next) {
 	let edtID = req.params.edtID;
+	let dataOnly = req.params.dataOnly;
+	let edtIDType = isNaN(edtID) ? 'edtName' : 'edtID';
+	dataOnly = !dataOnly ? false : dataOnly.toLowerCase() == 'raw';
+
 	if (!edtID) {
 		let tmpCache = JSON.parse(JSON.stringify(cache));
 		for (let i = 0; i < tmpCache.count; i++) {
@@ -26,10 +30,24 @@ app.use('/data/:edtID?', function (req, res, next) {
 			delete tmpCache[i].edtData;
 		}
 		res.send(tmpCache);
-	} else if (!cache[edtID] || edtID == "count")
-		res.send('{"error": "edtID does not exist"}');
+		return;
+	} else if (edtIDType == 'edtName') {
+		if (edtID != "count")
+			for (let i = 0; i < cache.count; i++)
+				if (cache[i].edtName.replace(/ /g, '_') == edtID) {
+					edtID = i;
+					break;
+				}
+
+		if(isNaN(edtID))
+			edtID = -1;
+	} else if (edtIDType == 'edtID' && !cache[edtID])
+		edtID = -1;
+
+	if (edtID != -1)
+		res.send(dataOnly ? cache[edtID].edtData : cache[edtID]);
 	else
-		res.send(cache[edtID]);
+		res.send('{"error": "' + edtIDType + ' does not exist"}');
 });
 
 app.use("/edt/:edtID", function (req, res, next) {
@@ -98,7 +116,25 @@ function httpGet(confEl, callback) {
 	};
 	request(options,
 		function (err, res, body) {
-			callback(err, body);
+			callback(err, convertString(body));
 		}
 	);
+}
+
+var regexCString = new RegExp('\\?\\?', 'g');
+
+function convertString(str) {
+	if (!str)
+		return str;
+
+	str = str.replace(/Amphith\?\?\?\?tre/g, 'Amphi');
+	let splited = str.split('\r');
+
+	for (let i = 0; i < splited.length; i++)
+		if (splited[i].startsWith('\nSUMMARY:') && splited[i].toLowerCase().includes('_s'))
+			splited[i] = splited[i].substring(0, splited[i].toLowerCase().indexOf('_s'));
+
+	str = splited.join('');
+
+	return str.replace(regexCString, 'e');
 }

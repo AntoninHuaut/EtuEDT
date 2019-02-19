@@ -35,8 +35,8 @@ function loadEDT(countTry, data) {
     else {
         document.title = "EDT : " + data.edtName + " Informatique";
         document.getElementById('update').innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
-        document.getElementById('edtName').innerHTML = 'EDT : ' + data.edtName;
-
+        let edtUrl = window.origin + "/data/" + data.edtName.replace(/ /g, '_') + "/raw";
+        document.getElementById('edtName').innerHTML = '<i id="edtLink" data-clipboard-text="' + edtUrl + '" title="Obtenir le lien brut de l\'emploi du temps" class="clipboard fas fa-unlink"></i> EDT : ' + data.edtName;
         let eventComps = new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent");
 
         let events = eventComps.map(function (item) {
@@ -44,11 +44,11 @@ function loadEDT(countTry, data) {
                 return null;
             } else {
                 let data = {
-                    "title": convertString(item.getFirstPropertyValue("summary")),
-                    "enseignant": convertString(item.getFirstPropertyValue('description').split('\n')[4].replace('Enseignant : ', '')),
+                    "title": item.getFirstPropertyValue("summary"),
+                    "enseignant": item.getFirstPropertyValue('description').split('\n')[4].replace('Enseignant : ', ''),
                     "start": item.getFirstPropertyValue("dtstart").toJSDate(),
                     "end": item.getFirstPropertyValue("dtend").toJSDate(),
-                    "location": convertString(item.getFirstPropertyValue("location"))
+                    "location": item.getFirstPropertyValue("location")
                 };
 
                 data.color = getColorMatiere(data.title);
@@ -63,7 +63,22 @@ function loadEDT(countTry, data) {
         });
 
         loadCalendar(events, edtCookie);
+        initClipboard();
     }
+}
+
+function initClipboard() {
+    let clipboard = new ClipboardJS('.clipboard');
+
+    clipboard.on('success', function (e) {
+        if (e.action == 'copy')
+            iziToast.show({
+                title: "Le lien brut de l'emploi du temps a été copié",
+                color: 'green',
+                position: 'topLeft',
+                timeout: 2500,
+            });
+    });
 }
 
 function getColorMatiere(mat) {
@@ -78,22 +93,6 @@ function getColorMatiere(mat) {
     }
 
     return colors[mat];
-}
-
-var regexCString = new RegExp('\\?\\?', 'g');
-
-function convertString(str) {
-    if (!str)
-        return str;
-
-    if (str.startsWith('Amphi'))
-        return 'Amphi';
-
-    let get = str.match(/.+?(?=_)/);
-    if (!!get)
-        str = get[0];
-
-    return str.replace(regexCString, 'e');
 }
 
 function getRandomColor() {

@@ -5,12 +5,21 @@
     font-weight: 450;
 }
 
-#edtNameDiv {
+#edtNameLeft {
     position: absolute;
 }
 
 #update {
     display: inline-block;
+}
+
+#edtLink {
+    margin-left: 3px;
+    color: rgb(212, 0, 0);
+}
+
+#edtLink:hover {
+    color: red;
 }
 
 #load h1 {
