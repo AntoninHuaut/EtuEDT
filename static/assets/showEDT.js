@@ -1,7 +1,10 @@
+var calendar;
+var views = ['timeGridDay', 'timeGridWeek', 'dayGridMonth'];
+
 function loadCalendar(listEvents, edtCookie) {
     let calendarEl = document.getElementById('calendar');
 
-    let calendar = new FullCalendar.Calendar(calendarEl, {
+    calendar = new FullCalendar.Calendar(calendarEl, {
         plugins: ['dayGrid', 'timeGrid', 'bootstrap'],
         themeSystem: 'bootstrap',
         events: listEvents,
@@ -109,6 +112,34 @@ function loadCalendar(listEvents, edtCookie) {
     let date = moment(new Date());
     while (date.isoWeekday() >= 6 && date > calendar.getDate())
         calendar.next();
+
+    document.onkeydown = keyUpdateCalendar;
+}
+
+function keyUpdateCalendar(e) {
+    e = e || window.event;
+    let key = e.keyCode;
+    let index = views.indexOf(calendar.view.type);
+
+    if (key == '40') {
+        index--;
+        index = index < 0 ? views.length - 1 : index;
+    } else if (key == '38') {
+        index++;
+        index = index >= views.length ? 0 : index;
+    } else if (key == '37')
+        calendar.prev();
+    else if (key == '39')
+        calendar.next();
+    else if (key == '17')
+        calendar.today();
+    else
+        return true;
+
+    if (key == '40' || key == '38')
+        calendar.changeView(views[index]);
+
+    return false;
 }
 
 function getDateWFormat(jsDate) {
