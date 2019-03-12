@@ -13,12 +13,12 @@
     display: inline-block;
 }
 
-#edtLink {
+.edtToolbar {
     margin-left: 3px;
     color: rgb(212, 0, 0);
 }
 
-#edtLink:hover {
+.edtToolbar:hover {
     color: red;
 }
 

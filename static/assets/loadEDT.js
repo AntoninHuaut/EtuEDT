@@ -35,8 +35,7 @@ function loadEDT(countTry, data) {
     else {
         document.title = "EDT : " + data.edtName + " Informatique";
         document.getElementById('update').innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
-        let edtUrl = window.origin + "/data/" + data.edtName.replace(/ /g, '_') + "/raw";
-        document.getElementById('edtName').innerHTML = '<i id="edtLink" data-clipboard-text="' + edtUrl + '" title="Obtenir le lien brut de l\'emploi du temps" class="clipboard fas fa-unlink"></i> EDT : ' + data.edtName;
+        document.getElementById('edtName').innerHTML = 'EDT : ' + data.edtName;
         let eventComps = new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent");
 
         let events = eventComps.map(function (item) {
@@ -63,22 +62,8 @@ function loadEDT(countTry, data) {
         });
 
         loadCalendar(events, edtCookie);
-        initClipboard();
+        initTools(data);
     }
-}
-
-function initClipboard() {
-    let clipboard = new ClipboardJS('.clipboard');
-
-    clipboard.on('success', function (e) {
-        if (e.action == 'copy')
-            iziToast.show({
-                title: "Le lien brut de l'emploi du temps a été copié",
-                color: 'green',
-                position: 'topLeft',
-                timeout: 2500,
-            });
-    });
 }
 
 function getColorMatiere(mat) {
