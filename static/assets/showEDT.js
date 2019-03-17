@@ -21,7 +21,8 @@ function loadCalendar(listEvents, edtCookie) {
         },
         defaultView: 'timeGridWeek',
         firstDay: 1,
-        aspectRatio: 2.30,
+        height: "auto",
+        contentHeight: "auto",
 
         // TimeGrid
         allDaySlot: false,
