@@ -1,5 +1,5 @@
 /*!
-@fullcalendar/daygrid v4.0.0-beta.2
+FullCalendar Day Grid Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
@@ -619,11 +619,10 @@ Docs & License: https://fullcalendar.io/
             );
             this.el.innerHTML =
                 '<div class="fc-header ' + theme.getClass('popoverHeader') + '">' +
-                    '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
                     '<span class="fc-title">' +
                     core.htmlEscape(title) +
                     '</span>' +
-                    '<div class="fc-clear"></div>' +
+                    '<span class="fc-close ' + theme.getIconClass('close') + '"></span>' +
                     '</div>' +
                     '<div class="fc-body ' + theme.getClass('popoverContent') + '">' +
                     '<div class="fc-event-container"></div>' +
@@ -632,21 +631,23 @@ Docs & License: https://fullcalendar.io/
         };
         DayTile.prototype.queryHit = function (positionLeft, positionTop, elWidth, elHeight) {
             var date = this.props.date; // HACK
-            return {
-                component: this,
-                dateSpan: {
-                    allDay: true,
-                    range: { start: date, end: core.addDays(date, 1) }
-                },
-                dayEl: this.el,
-                rect: {
-                    left: 0,
-                    top: 0,
-                    right: elWidth,
-                    bottom: elHeight
-                },
-                layer: 1
-            };
+            if (positionLeft < elWidth && positionTop < elHeight) {
+                return {
+                    component: this,
+                    dateSpan: {
+                        allDay: true,
+                        range: { start: date, end: core.addDays(date, 1) }
+                    },
+                    dayEl: this.el,
+                    rect: {
+                        left: 0,
+                        top: 0,
+                        right: elWidth,
+                        bottom: elHeight
+                    },
+                    layer: 1
+                };
+            }
         };
         return DayTile;
     }(core.DateComponent));
@@ -1143,7 +1144,8 @@ Docs & License: https://fullcalendar.io/
             a.innerText = this.getMoreLinkText(hiddenSegs.length);
             a.addEventListener('click', function (ev) {
                 var clickOption = _this.opt('eventLimitClick');
-                var date = _this.props.cells[row][col].date;
+                var _col = _this.isRtl ? _this.colCnt - col - 1 : col; // HACK: props.cells has different dir system?
+                var date = _this.props.cells[row][_col].date;
                 var moreEl = ev.currentTarget;
                 var dayEl = _this.getCellEl(row, col);
                 var allSegs = _this.getCellSegs(row, col);
@@ -1178,6 +1180,7 @@ Docs & License: https://fullcalendar.io/
         DayGrid.prototype.showSegPopover = function (row, col, moreLink, segs) {
             var _this = this;
             var _a = this, calendar = _a.calendar, view = _a.view, theme = _a.theme;
+            var _col = this.isRtl ? this.colCnt - col - 1 : col; // HACK: props.cells has different dir system?
             var moreWrap = moreLink.parentNode; // the <div> wrapper around the <a>
             var topEl; // the element we want to match the top coordinate of
             var options;
@@ -1194,7 +1197,7 @@ Docs & License: https://fullcalendar.io/
                 autoHide: true,
                 content: function (el) {
                     _this.segPopoverTile = new DayTile(_this.context, el);
-                    _this.updateSegPopoverTile(_this.props.cells[row][col].date, segs);
+                    _this.updateSegPopoverTile(_this.props.cells[row][_col].date, segs);
                 },
                 hide: function () {
                     _this.segPopoverTile.destroy();
@@ -1541,8 +1544,8 @@ Docs & License: https://fullcalendar.io/
     }(core.Slicer));
 
     var DayGridView$1 = /** @class */ (function (_super) {
-        __extends(DayGridView$$1, _super);
-        function DayGridView$$1(_context, viewSpec, dateProfileGenerator, parentEl) {
+        __extends(DayGridView, _super);
+        function DayGridView(_context, viewSpec, dateProfileGenerator, parentEl) {
             var _this = _super.call(this, _context, viewSpec, dateProfileGenerator, parentEl) || this;
             _this.buildDayTable = core.memoize(buildDayTable);
             if (_this.opt('columnHeader')) {
@@ -1551,14 +1554,14 @@ Docs & License: https://fullcalendar.io/
             _this.simpleDayGrid = new SimpleDayGrid(_this.context, _this.dayGrid);
             return _this;
         }
-        DayGridView$$1.prototype.destroy = function () {
+        DayGridView.prototype.destroy = function () {
             _super.prototype.destroy.call(this);
             if (this.header) {
                 this.header.destroy();
             }
             this.simpleDayGrid.destroy();
         };
-        DayGridView$$1.prototype.render = function (props) {
+        DayGridView.prototype.render = function (props) {
             _super.prototype.render.call(this, props);
             var dateProfile = this.props.dateProfile;
             var dayTable = this.dayTable =
@@ -1585,7 +1588,7 @@ Docs & License: https://fullcalendar.io/
                 nextDayThreshold: this.nextDayThreshold
             });
         };
-        return DayGridView$$1;
+        return DayGridView;
     }(DayGridView));
     function buildDayTable(dateProfile, dateProfileGenerator) {
         var daySeries = new core.DaySeries(dateProfile.renderRange, dateProfileGenerator);
@@ -1613,14 +1616,14 @@ Docs & License: https://fullcalendar.io/
         }
     });
 
-    exports.default = main;
-    exports.SimpleDayGrid = SimpleDayGrid;
-    exports.DayGridSlicer = DayGridSlicer;
-    exports.DayGrid = DayGrid;
     exports.AbstractDayGridView = DayGridView;
-    exports.DayGridView = DayGridView$1;
-    exports.buildBasicDayTable = buildDayTable;
     exports.DayBgRow = DayBgRow;
+    exports.DayGrid = DayGrid;
+    exports.DayGridSlicer = DayGridSlicer;
+    exports.DayGridView = DayGridView$1;
+    exports.SimpleDayGrid = SimpleDayGrid;
+    exports.buildBasicDayTable = buildDayTable;
+    exports.default = main;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

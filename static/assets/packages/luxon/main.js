@@ -1,5 +1,5 @@
 /*!
-@fullcalendar/luxon v4.0.0-beta.2
+FullCalendar Luxon Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
@@ -153,9 +153,9 @@ Docs & License: https://fullcalendar.io/
         return formatStart(cmd.whole) + separator + formatEnd(cmd.whole);
     }
 
+    exports.default = main;
     exports.toDateTime = toDateTime;
     exports.toDuration = toDuration;
-    exports.default = main;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

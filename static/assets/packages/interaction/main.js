@@ -1,5 +1,5 @@
 /*!
-@fullcalendar/interaction v4.0.0-beta.2
+FullCalendar Interaction Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
@@ -86,7 +86,7 @@ Docs & License: https://fullcalendar.io/
                 if (!_this.shouldIgnoreMouse() &&
                     isPrimaryMouseButton(ev) &&
                     _this.tryStart(ev)) {
-                    var pev = createEventFromMouse(ev, _this.subjectEl);
+                    var pev = _this.createEventFromMouse(ev, true);
                     _this.emitter.trigger('pointerdown', pev);
                     _this.initScrollWatch(pev);
                     if (!_this.shouldIgnoreMove) {
@@ -96,14 +96,14 @@ Docs & License: https://fullcalendar.io/
                 }
             };
             this.handleMouseMove = function (ev) {
-                var pev = createEventFromMouse(ev, _this.subjectEl);
+                var pev = _this.createEventFromMouse(ev);
                 _this.recordCoords(pev);
                 _this.emitter.trigger('pointermove', pev);
             };
             this.handleMouseUp = function (ev) {
                 document.removeEventListener('mousemove', _this.handleMouseMove);
                 document.removeEventListener('mouseup', _this.handleMouseUp);
-                _this.emitter.trigger('pointerup', createEventFromMouse(ev, _this.subjectEl));
+                _this.emitter.trigger('pointerup', _this.createEventFromMouse(ev));
                 _this.cleanup(); // call last so that pointerup has access to props
             };
             // Touch
@@ -111,7 +111,7 @@ Docs & License: https://fullcalendar.io/
             this.handleTouchStart = function (ev) {
                 if (_this.tryStart(ev)) {
                     _this.isTouchDragging = true;
-                    var pev = createEventFromTouch(ev, _this.subjectEl);
+                    var pev = _this.createEventFromTouch(ev, true);
                     _this.emitter.trigger('pointerdown', pev);
                     _this.initScrollWatch(pev);
                     // unlike mouse, need to attach to target, not document
@@ -130,7 +130,7 @@ Docs & License: https://fullcalendar.io/
                 }
             };
             this.handleTouchMove = function (ev) {
-                var pev = createEventFromTouch(ev, _this.subjectEl);
+                var pev = _this.createEventFromTouch(ev);
                 _this.recordCoords(pev);
                 _this.emitter.trigger('pointermove', pev);
             };
@@ -140,8 +140,8 @@ Docs & License: https://fullcalendar.io/
                     target.removeEventListener('touchmove', _this.handleTouchMove);
                     target.removeEventListener('touchend', _this.handleTouchEnd);
                     target.removeEventListener('touchcancel', _this.handleTouchEnd);
-                    window.removeEventListener('scroll', _this.handleTouchScroll, true); // wasCaptured=true
-                    _this.emitter.trigger('pointerup', createEventFromTouch(ev, _this.subjectEl));
+                    window.removeEventListener('scroll', _this.handleTouchScroll, true); // useCaptured=true
+                    _this.emitter.trigger('pointerup', _this.createEventFromTouch(ev));
                     _this.cleanup(); // call last so that pointerup has access to props
                     _this.isTouchDragging = false;
                     startIgnoringMouse();
@@ -152,12 +152,16 @@ Docs & License: https://fullcalendar.io/
             };
             this.handleScroll = function (ev) {
                 if (!_this.shouldIgnoreMove) {
+                    var pageX = (window.pageXOffset - _this.prevScrollX) + _this.prevPageX;
+                    var pageY = (window.pageYOffset - _this.prevScrollY) + _this.prevPageY;
                     _this.emitter.trigger('pointermove', {
                         origEvent: ev,
                         isTouch: _this.isTouchDragging,
                         subjectEl: _this.subjectEl,
-                        pageX: (window.pageXOffset - _this.prevScrollX) + _this.prevPageX,
-                        pageY: (window.pageYOffset - _this.prevScrollY) + _this.prevPageY
+                        pageX: pageX,
+                        pageY: pageY,
+                        deltaX: pageX - _this.origPageX,
+                        deltaY: pageY - _this.origPageY
                     });
                 }
             };
@@ -228,44 +232,70 @@ Docs & License: https://fullcalendar.io/
         };
         PointerDragging.prototype.destroyScrollWatch = function () {
             if (this.shouldWatchScroll) {
-                window.removeEventListener('scroll', this.handleScroll, true); // wasCaptured=true
+                window.removeEventListener('scroll', this.handleScroll, true); // useCaptured=true
             }
+        };
+        // Event Normalization
+        // ----------------------------------------------------------------------------------------------------
+        PointerDragging.prototype.createEventFromMouse = function (ev, isFirst) {
+            var deltaX = 0;
+            var deltaY = 0;
+            // TODO: repeat code
+            if (isFirst) {
+                this.origPageX = ev.pageX;
+                this.origPageY = ev.pageY;
+            }
+            else {
+                deltaX = ev.pageX - this.origPageX;
+                deltaY = ev.pageY - this.origPageY;
+            }
+            return {
+                origEvent: ev,
+                isTouch: false,
+                subjectEl: this.subjectEl,
+                pageX: ev.pageX,
+                pageY: ev.pageY,
+                deltaX: deltaX,
+                deltaY: deltaY
+            };
+        };
+        PointerDragging.prototype.createEventFromTouch = function (ev, isFirst) {
+            var touches = ev.touches;
+            var pageX;
+            var pageY;
+            var deltaX = 0;
+            var deltaY = 0;
+            // if touch coords available, prefer,
+            // because FF would give bad ev.pageX ev.pageY
+            if (touches && touches.length) {
+                pageX = touches[0].pageX;
+                pageY = touches[0].pageY;
+            }
+            else {
+                pageX = ev.pageX;
+                pageY = ev.pageY;
+            }
+            // TODO: repeat code
+            if (isFirst) {
+                this.origPageX = pageX;
+                this.origPageY = pageY;
+            }
+            else {
+                deltaX = pageX - this.origPageX;
+                deltaY = pageY - this.origPageY;
+            }
+            return {
+                origEvent: ev,
+                isTouch: true,
+                subjectEl: this.subjectEl,
+                pageX: pageX,
+                pageY: pageY,
+                deltaX: deltaX,
+                deltaY: deltaY
+            };
         };
         return PointerDragging;
     }());
-    // Event Normalization
-    // ----------------------------------------------------------------------------------------------------
-    function createEventFromMouse(ev, subjectEl) {
-        return {
-            origEvent: ev,
-            isTouch: false,
-            subjectEl: subjectEl,
-            pageX: ev.pageX,
-            pageY: ev.pageY
-        };
-    }
-    function createEventFromTouch(ev, subjectEl) {
-        var touches = ev.touches;
-        var pageX;
-        var pageY;
-        // if touch coords available, prefer,
-        // because FF would give bad ev.pageX ev.pageY
-        if (touches && touches.length) {
-            pageX = touches[0].pageX;
-            pageY = touches[0].pageY;
-        }
-        else {
-            pageX = ev.pageX;
-            pageY = ev.pageY;
-        }
-        return {
-            origEvent: ev,
-            isTouch: true,
-            subjectEl: subjectEl,
-            pageX: pageX,
-            pageY: pageY
-        };
-    }
     // Returns a boolean whether this was a left mouse click and no ctrl key (which means right click on Mac)
     function isPrimaryMouseButton(ev) {
         return ev.button === 0 && !ev.ctrlKey;
@@ -420,34 +450,6 @@ Docs & License: https://fullcalendar.io/
             return mirrorEl;
         };
         return ElementMirror;
-    }());
-
-    /*
-    An abstraction for a dragging interaction originating on an event.
-    Does higher-level things than PointerDragger, such as possibly:
-    - a "mirror" that moves with the pointer
-    - a minimum number of pixels or other criteria for a true drag to begin
-
-    subclasses must emit:
-    - pointerdown
-    - dragstart
-    - dragmove
-    - pointerup
-    - dragend
-    */
-    var ElementDragging = /** @class */ (function () {
-        function ElementDragging() {
-            this.emitter = new core.EmitterMixin();
-        }
-        ElementDragging.prototype.destroy = function () {
-        };
-        ElementDragging.prototype.setMirrorIsVisible = function (bool) {
-            // optional if subclass doesn't want to support a mirror
-        };
-        ElementDragging.prototype.setMirrorNeedsRevert = function (bool) {
-            // optional if subclass doesn't want to support a mirror
-        };
-        return ElementDragging;
     }());
 
     /*
@@ -632,7 +634,7 @@ Docs & License: https://fullcalendar.io/
                 if (xDelta < 0) {
                     this.everMovedLeft = true;
                 }
-                else if (yDelta > 0) {
+                else if (xDelta > 0) {
                     this.everMovedRight = true;
                 }
                 this.pointerScreenX = pointerScreenX;
@@ -748,7 +750,7 @@ Docs & License: https://fullcalendar.io/
     var FeaturefulElementDragging = /** @class */ (function (_super) {
         __extends(FeaturefulElementDragging, _super);
         function FeaturefulElementDragging(containerEl) {
-            var _this = _super.call(this) || this;
+            var _this = _super.call(this, containerEl) || this;
             // options that can be directly set by caller
             // the caller can also set the PointerDragging's options as well
             _this.delay = null;
@@ -776,8 +778,6 @@ Docs & License: https://fullcalendar.io/
                     _this.emitter.trigger('pointerdown', ev);
                     if (!_this.pointer.shouldIgnoreMove) {
                         // actions related to initiating dragstart+dragmove+dragend...
-                        _this.origX = ev.pageX;
-                        _this.origY = ev.pageY;
                         _this.mirror.setIsVisible(false); // reset. caller must set-visible
                         _this.mirror.start(ev.subjectEl, ev.pageX, ev.pageY); // must happen on first pointer down
                         _this.startDelay(ev);
@@ -791,11 +791,10 @@ Docs & License: https://fullcalendar.io/
                 if (_this.isInteracting) { // if false, still waiting for previous drag's revert
                     _this.emitter.trigger('pointermove', ev);
                     if (!_this.isDistanceSurpassed) {
-                        var dx = ev.pageX - _this.origX;
-                        var dy = ev.pageY - _this.origY;
                         var minDistance = _this.minDistance;
                         var distanceSq = void 0; // current distance from the origin, squared
-                        distanceSq = dx * dx + dy * dy;
+                        var deltaX = ev.deltaX, deltaY = ev.deltaY;
+                        distanceSq = deltaX * deltaX + deltaY * deltaY;
                         if (distanceSq >= minDistance * minDistance) { // use pythagorean theorem
                             _this.handleDistanceSurpassed(ev);
                         }
@@ -890,8 +889,11 @@ Docs & License: https://fullcalendar.io/
         FeaturefulElementDragging.prototype.setMirrorNeedsRevert = function (bool) {
             this.mirrorNeedsRevert = bool;
         };
+        FeaturefulElementDragging.prototype.setAutoScrollEnabled = function (bool) {
+            this.autoScroller.isEnabled = bool;
+        };
         return FeaturefulElementDragging;
-    }(ElementDragging));
+    }(core.ElementDragging));
 
     /*
     When this class is instantiated, it records the offset of an element (relative to the document topleft),
@@ -1077,7 +1079,7 @@ Docs & License: https://fullcalendar.io/
                     var height = origRect.bottom - origRect.top;
                     if (
                     // must be within the element's bounds
-                    positionLeft >= 0 && positionTop < width &&
+                    positionLeft >= 0 && positionLeft < width &&
                         positionTop >= 0 && positionTop < height) {
                         var hit = component.queryHit(positionLeft, positionTop, width, height);
                         if (hit &&
@@ -1283,7 +1285,7 @@ Docs & License: https://fullcalendar.io/
                         null;
                 mirror.parentNode = initialCalendar.el;
                 mirror.revertDuration = component.opt('dragRevertDuration');
-                var isValid = _this.component.isValidSegDownEl(origTarget) &&
+                var isValid = component.isValidSegDownEl(origTarget) &&
                     !core.elementClosest(origTarget, '.fc-resizer');
                 dragging.setIgnoreMove(!isValid);
                 // disable dragging for elements that are resizable (ie, selectable)
@@ -1344,7 +1346,7 @@ Docs & License: https://fullcalendar.io/
                         if (mutation) {
                             mutatedRelevantEvents = core.applyMutationToEventStore(relevantEvents, receivingCalendar.eventUiBases, mutation, receivingCalendar);
                             interaction.mutatedEvents = mutatedRelevantEvents;
-                            if (!_this.component.isInteractionValid(interaction)) {
+                            if (!receivingComponent.isInteractionValid(interaction)) {
                                 isInvalid = true;
                                 mutation = null;
                                 mutatedRelevantEvents = null;
@@ -1958,7 +1960,7 @@ Docs & License: https://fullcalendar.io/
             var transform = _a[_i];
             __assign(defProps, transform(dateSpan, dragMeta));
         }
-        var def = core.parseEventDef(defProps, dragMeta.sourceId, dateSpan.allDay, Boolean(dragMeta.duration), // hasEnd
+        var def = core.parseEventDef(defProps, dragMeta.sourceId, dateSpan.allDay, calendar.opt('forceEventDuration') || Boolean(dragMeta.duration), // hasEnd
         calendar);
         var start = dateSpan.range.start;
         // only rely on time info if drop zone is all-day,
@@ -1995,8 +1997,8 @@ Docs & License: https://fullcalendar.io/
     */
     var ExternalDraggable = /** @class */ (function () {
         function ExternalDraggable(el, settings) {
-            if (settings === void 0) { settings = {}; }
             var _this = this;
+            if (settings === void 0) { settings = {}; }
             this.handlePointerDown = function (ev) {
                 var dragging = _this.dragging;
                 var _a = _this.settings, minDistance = _a.minDistance, longPressDelay = _a.longPressDelay;
@@ -2044,7 +2046,7 @@ Docs & License: https://fullcalendar.io/
     var InferredElementDragging = /** @class */ (function (_super) {
         __extends(InferredElementDragging, _super);
         function InferredElementDragging(containerEl) {
-            var _this = _super.call(this) || this;
+            var _this = _super.call(this, containerEl) || this;
             _this.shouldIgnoreMove = false;
             _this.mirrorSelector = '';
             _this.currentMirrorEl = null;
@@ -2099,7 +2101,7 @@ Docs & License: https://fullcalendar.io/
             }
         };
         return InferredElementDragging;
-    }(ElementDragging));
+    }(core.ElementDragging));
 
     /*
     Bridges third-party drag-n-drop systems with FullCalendar.
@@ -2138,14 +2140,15 @@ Docs & License: https://fullcalendar.io/
 
     var main = core.createPlugin({
         componentInteractions: [DateClicking, DateSelecting, EventDragging, EventDragging$1],
-        calendarInteractions: [UnselectAuto]
+        calendarInteractions: [UnselectAuto],
+        elementDraggingImpl: FeaturefulElementDragging
     });
 
-    exports.default = main;
-    exports.PointerDragging = PointerDragging;
-    exports.ElementDragging = ElementDragging;
     exports.Draggable = ExternalDraggable;
+    exports.FeaturefulElementDragging = FeaturefulElementDragging;
+    exports.PointerDragging = PointerDragging;
     exports.ThirdPartyDraggable = ThirdPartyDraggable;
+    exports.default = main;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

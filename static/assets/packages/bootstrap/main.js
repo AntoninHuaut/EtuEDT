@@ -1,5 +1,5 @@
 /*!
-@fullcalendar/bootstrap v4.0.0-beta.2
+FullCalendar Bootstrap Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
@@ -52,8 +52,7 @@ Docs & License: https://fullcalendar.io/
         tableListHeading: 'table-active',
         buttonGroup: 'btn-group',
         button: 'btn btn-primary',
-        stateActive: 'active',
-        stateDisabled: 'disabled',
+        buttonActive: 'active',
         today: 'alert alert-info',
         popover: 'card card-primary',
         popoverHeader: 'card-header',

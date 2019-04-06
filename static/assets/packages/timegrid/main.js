@@ -1,5 +1,5 @@
 /*!
-@fullcalendar/timegrid v4.0.0-beta.2
+FullCalendar Time Grid Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
@@ -68,8 +68,14 @@ Docs & License: https://fullcalendar.io/
         // Given an array of foreground segments, render a DOM element for each, computes position,
         // and attaches to the column inner-container elements.
         TimeGridEventRenderer.prototype.attachSegs = function (segs, mirrorInfo) {
-            this.segsByCol = this.timeGrid.groupSegsByCol(segs);
-            this.timeGrid.attachSegsByCol(this.segsByCol, this.timeGrid.fgContainerEls);
+            var segsByCol = this.timeGrid.groupSegsByCol(segs);
+            // order the segs within each column
+            // TODO: have groupSegsByCol do this?
+            for (var col = 0; col < segsByCol.length; col++) {
+                segsByCol[col] = this.sortEventSegs(segsByCol[col]);
+            }
+            this.segsByCol = segsByCol;
+            this.timeGrid.attachSegsByCol(segsByCol, this.timeGrid.fgContainerEls);
         };
         TimeGridEventRenderer.prototype.detachSegs = function (segs) {
             segs.forEach(function (seg) {
@@ -123,7 +129,7 @@ Docs & License: https://fullcalendar.io/
             var timeText;
             var fullTimeText; // more verbose time text. for the print stylesheet
             var startTimeText; // just the start time text
-            classes.unshift('fc-time-grid-event', 'fc-v-event');
+            classes.unshift('fc-time-grid-event');
             // if the event appears to span more than one day...
             if (core.isMultiDayRange(eventRange.range)) {
                 // Don't display time text on segments that run entirely through a day.
@@ -166,7 +172,6 @@ Docs & License: https://fullcalendar.io/
                         '</div>' :
                     '') +
                 '</div>' +
-                '<div class="fc-bg"></div>' +
                 /* TODO: write CSS for this
                 (isResizableFromStart ?
                   '<div class="fc-resizer fc-start-resizer"></div>' :
@@ -179,12 +184,12 @@ Docs & License: https://fullcalendar.io/
                 '</a>';
         };
         // Given an array of segments that are all in the same column, sets the backwardCoord and forwardCoord on each.
+        // Assumed the segs are already ordered.
         // NOTE: Also reorders the given array by date!
         TimeGridEventRenderer.prototype.computeSegHorizontals = function (segs) {
             var levels;
             var level0;
             var i;
-            segs = this.sortEventSegs(segs); // order by certain criteria
             levels = buildSlotSegLevels(segs);
             computeForwardSlotSegs(levels);
             if ((level0 = levels[0])) {
@@ -252,6 +257,9 @@ Docs & License: https://fullcalendar.io/
             for (var _i = 0, segs_1 = segs; _i < segs_1.length; _i++) {
                 var seg = segs_1[_i];
                 core.applyStyle(seg.el, this.generateSegCss(seg));
+                if (seg.level > 0) {
+                    seg.el.classList.add('fc-time-grid-event-inset');
+                }
                 // if the event is short that the title will be cut off,
                 // attach a className that condenses the title into the time area.
                 if (seg.eventRange.def.title && seg.bottom - seg.top < 30) {
@@ -1245,8 +1253,8 @@ Docs & License: https://fullcalendar.io/
     }(core.Slicer));
 
     var TimeGridView$1 = /** @class */ (function (_super) {
-        __extends(TimeGridView$$1, _super);
-        function TimeGridView$$1(_context, viewSpec, dateProfileGenerator, parentEl) {
+        __extends(TimeGridView, _super);
+        function TimeGridView(_context, viewSpec, dateProfileGenerator, parentEl) {
             var _this = _super.call(this, _context, viewSpec, dateProfileGenerator, parentEl) || this;
             _this.buildDayTable = core.memoize(buildDayTable);
             if (_this.opt('columnHeader')) {
@@ -1258,7 +1266,7 @@ Docs & License: https://fullcalendar.io/
             }
             return _this;
         }
-        TimeGridView$$1.prototype.destroy = function () {
+        TimeGridView.prototype.destroy = function () {
             _super.prototype.destroy.call(this);
             if (this.header) {
                 this.header.destroy();
@@ -1268,7 +1276,7 @@ Docs & License: https://fullcalendar.io/
                 this.simpleDayGrid.destroy();
             }
         };
-        TimeGridView$$1.prototype.render = function (props) {
+        TimeGridView.prototype.render = function (props) {
             _super.prototype.render.call(this, props); // for flags for updateSize
             var dateProfile = this.props.dateProfile;
             var dayTable = this.buildDayTable(dateProfile, this.dateProfileGenerator);
@@ -1288,10 +1296,10 @@ Docs & License: https://fullcalendar.io/
                     dayTable: dayTable, nextDayThreshold: this.nextDayThreshold, isRigid: false }));
             }
         };
-        TimeGridView$$1.prototype.renderNowIndicator = function (date) {
+        TimeGridView.prototype.renderNowIndicator = function (date) {
             this.simpleTimeGrid.renderNowIndicator(date);
         };
-        return TimeGridView$$1;
+        return TimeGridView;
     }(TimeGridView));
     function buildDayTable(dateProfile, dateProfileGenerator) {
         var daySeries = new core.DaySeries(dateProfile.renderRange, dateProfileGenerator);
@@ -1318,13 +1326,13 @@ Docs & License: https://fullcalendar.io/
         }
     });
 
-    exports.TimeGridView = TimeGridView$1;
     exports.AbstractTimeGridView = TimeGridView;
-    exports.buildDayTable = buildDayTable;
-    exports.buildDayRanges = buildDayRanges;
-    exports.TimeGridSlicer = TimeGridSlicer;
-    exports.default = main;
     exports.TimeGrid = TimeGrid;
+    exports.TimeGridSlicer = TimeGridSlicer;
+    exports.TimeGridView = TimeGridView$1;
+    exports.buildDayRanges = buildDayRanges;
+    exports.buildDayTable = buildDayTable;
+    exports.default = main;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

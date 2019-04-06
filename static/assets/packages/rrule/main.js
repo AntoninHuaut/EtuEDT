@@ -1,5 +1,5 @@
 /*!
-@fullcalendar/rrule v4.0.0-beta.2
+FullCalendar RRule Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
@@ -40,42 +40,46 @@ Docs & License: https://fullcalendar.io/
         duration: core.createDuration
     };
     var recurring = {
-        parse: function (rawEvent, allDayDefault, leftoverProps, dateEnv) {
+        parse: function (rawEvent, leftoverProps, dateEnv) {
             if (rawEvent.rrule != null) {
                 var props = core.refineProps(rawEvent, EVENT_DEF_PROPS, {}, leftoverProps);
-                var parsed = parseRRule(props.rrule, allDayDefault, dateEnv);
+                var parsed = parseRRule(props.rrule, dateEnv);
                 if (parsed) {
                     return {
-                        allDay: parsed.allDay,
-                        duration: props.duration,
-                        typeData: parsed.rrule
+                        typeData: parsed.rrule,
+                        allDayGuess: parsed.allDayGuess,
+                        duration: props.duration
                     };
                 }
             }
             return null;
         },
-        expand: function (rrule$$1, eventDef, framingRange) {
-            return rrule$$1.between(framingRange.start, framingRange.end);
+        expand: function (rrule, framingRange) {
+            // we WANT an inclusive start and in exclusive end, but the js rrule lib will only do either BOTH
+            // inclusive or BOTH exclusive, which is stupid: https://github.com/jakubroztocil/rrule/issues/84
+            // Workaround: make inclusive, which will generate extra occurences, and then trim.
+            return rrule.between(framingRange.start, framingRange.end, true)
+                .filter(function (date) {
+                return date.valueOf() < framingRange.end.valueOf();
+            });
         }
     };
     var main = core.createPlugin({
         recurringTypes: [recurring]
     });
-    function parseRRule(input, allDayDefault, dateEnv) {
+    function parseRRule(input, dateEnv) {
+        var allDayGuess = null;
+        var rrule$1;
         if (typeof input === 'string') {
-            return {
-                rrule: rrule.rrulestr(input),
-                allDay: false
-            };
+            rrule$1 = rrule.rrulestr(input);
         }
         else if (typeof input === 'object' && input) { // non-null object
             var refined = __assign({}, input); // copy
-            var allDay = allDayDefault;
             if (typeof refined.dtstart === 'string') {
                 var dtstartMeta = dateEnv.createMarkerMeta(refined.dtstart);
                 if (dtstartMeta) {
                     refined.dtstart = dtstartMeta.marker;
-                    allDay = dtstartMeta.isTimeUnspecified;
+                    allDayGuess = dtstartMeta.isTimeUnspecified;
                 }
                 else {
                     delete refined.dtstart;
@@ -96,13 +100,10 @@ Docs & License: https://fullcalendar.io/
             if (refined.byweekday != null) {
                 refined.byweekday = convertConstants(refined.byweekday); // the plural version
             }
-            if (allDay == null) { // if not specific event after allDayDefault
-                allDay = true;
-            }
-            return {
-                rrule: new rrule.RRule(refined),
-                allDay: allDay
-            };
+            rrule$1 = new rrule.RRule(refined);
+        }
+        if (rrule$1) {
+            return { rrule: rrule$1, allDayGuess: allDayGuess };
         }
         return null;
     }

@@ -1,13 +1,13 @@
 /*!
-@fullcalendar/moment-timezone v4.0.0-beta.2
+FullCalendar Moment Timezone Plugin v4.0.2
 Docs & License: https://fullcalendar.io/
 (c) 2019 Adam Shaw
 */
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('moment'), require('@fullcalendar/core')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'moment', '@fullcalendar/core'], factory) :
-    (global = global || self, factory(global.FullCalendarMomentTimezone = {}, global.moment, global.FullCalendar));
-}(this, function (exports, moment, core) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('moment'), require('moment-timezone/builds/moment-timezone-with-data'), require('@fullcalendar/core')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'moment', 'moment-timezone/builds/moment-timezone-with-data', '@fullcalendar/core'], factory) :
+    (global = global || self, factory(global.FullCalendarMomentTimezone = {}, global.moment, global.moment, global.FullCalendar));
+}(this, function (exports, moment, momentTimezoneWithData, core) { 'use strict';
 
     moment = moment && moment.hasOwnProperty('default') ? moment['default'] : moment;
 

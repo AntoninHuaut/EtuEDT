@@ -55,25 +55,16 @@ function loadCalendar(listEvents, edtCookie) {
                 }
             } else if (event.view.type == "dayGridMonth") {
                 el = el.childNodes[0];
-                let size = el.childNodes.length;
-
-                if (size > 2) {
-                    el.querySelector('span').style.fontWeight = 'normal';
-                    el.querySelector('span').style.fontSize = '90%';
-                } else
-                    // Fix Fullcalendar bug
-                    el.innerHTML = "<span class='fc-time' style='font-weight: normal; font-size: 90%'>" + getDateWFormat(event.event.start) + "</span>" + el.innerHTML;
-
-                el.querySelectorAll('span')[1].style.fontWeight = '450';
-                el.querySelectorAll('span')[1].style.fontSize = '95%';
+                let spans = el.querySelectorAll('span');
+                spans[0].style.fontWeight = 'normal';
+                spans[0].style.fontSize = '90%';
+                spans[1].style.fontWeight = '450';
+                spans[1].style.fontSize = '95%';
 
                 let props = event.event.extendedProps;
                 if (props.location != null && props.location != "")
                     el.innerHTML += "<div style='font-weight: normal; font-size: 80%; float: right;'>" + props.location + "</div>";
             }
-        },
-        viewSkeletonRender: () => {
-            document.querySelectorAll('.fc-divider').forEach(get => get.parentElement.removeChild(get));
         },
         eventClick: function (info) {
             info = info.event;
