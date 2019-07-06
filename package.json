@@ -2,17 +2,17 @@
   "name": "etuedt",
   "version": "1.0.0",
   "description": "A Node.js app using [Express 4](http://expressjs.com/) and [FullCalendar v4](https://fullcalendar.io/).",
-  "main": "apps.js",
+  "main": "apps/apps.js",
   "dependencies": {
     "async": "^2.6.1",
     "body-parser": "^1.18.3",
-    "cookie-parser": "^1.4.3",
+    "cookie-parser": "^1.4.4",
     "express": "^4.16.4",
     "request": "^2.88.0"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node apps.js"
+    "start": "node apps/apps.js"
   },
   "author": "",
   "license": "ISC"
