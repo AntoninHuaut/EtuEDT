@@ -1,7 +1,7 @@
 var calendar;
 var views = ['timeGridDay', 'timeGridWeek', 'dayGridMonth'];
 
-function loadCalendar(listEvents, edtCookie) {
+function loadCalendar(listEvents, options) {
     let calendarEl = document.getElementById('calendar');
 
     calendar = new FullCalendar.Calendar(calendarEl, {
@@ -48,7 +48,7 @@ function loadCalendar(listEvents, edtCookie) {
                     el.childNodes[0].childNodes[0].childNodes[0].style.display = "inline-block";
 
                     let location = event.location == "Amphi" && title.startsWith("CM ") ? " " : event.location;
-                    let enseignant = !edtCookie.enseignant ? " " : event.enseignant;
+                    let enseignant = !options.enseignant ? " " : event.enseignant;
 
                     el.childNodes[0].childNodes[0].innerHTML += ("<div style='font-size: 85%; font-style: italic; float: right;'> " + enseignant + "</div>");
                     el.childNodes[0].childNodes[1].innerHTML += ("<div style='font-size: 85%; font-weight: normal; float: right;'>" + location + "</div>");

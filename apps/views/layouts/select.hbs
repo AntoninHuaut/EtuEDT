@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>EtuEDT - Accueil</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{{>css}}
+
+	<style>
+		.toggle-handle {
+			background-color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container container-base w-50">
+		<div id="main">
+			<div>
+				<h1>Veuillez sélectionner un emploi du temps :</h1>
+			</div>
+			<hr>
+			<div id="btnList">
+				{{#each edtList}}
+				<button type="button" onclick='redirectEDT({{edtID}})'
+					class='btn btn-lg btn-{{color}}'>{{edtName}}</button>
+				{{/each}}
+			</div>
+		</div>
+
+		<div style="margin-top: 50px;">
+			<div>
+				<h1>Options :</h1>
+			</div>
+			<hr>
+			<div id="optList">
+				{{#each options}}
+				<div id="{{name}}">
+					<label>
+						<input name="{{name}}" id="check-{{name}}" type="checkbox" {{#if checked}}checked{{/if}} data-toggle="toggle" data-onstyle="success"
+							data-offstyle="danger" data-on="<i class='fas fa-check'></i>"
+							data-off="<i class='fas fa-times'></i>" autocomplete="off" />
+					</label>
+					<span style="margin-left: 15px;" class="infos">Afficher les {{name}}s</span>
+				</div>
+				{{/each}}
+			</div>
+		</div>
+	</div>
+
+	{{>js}}
+	<script src="/js/select/select.js"></script>
+</body>
+
+</html>

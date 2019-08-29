@@ -11,27 +11,22 @@ var colorsList = randomColor({
 
 loadEDT(0);
 
-function loadEDT(countTry, data) {
-    let edtCookieC = getCookie('edtCookie');
-    if (!cookieIsValid(edtCookieC)) {
-        window.location.assign(window.location.origin + "/");
-        return;
-    }
+async function loadEDT(countTry, data) {
+    let res = await (fetch("/edt/edtData").then(res => res.json()));
+    if (res.edtID == null) return window.location = '/';
 
-    let edtCookie = parseObjectFromCookie(edtCookieC);
+    if (countTry == 0) return $.get('/data/' + res.edtID + "/").then(data => loadEDT(countTry + 1, data));
 
-    if (countTry > 1)
-        document.getElementById('loadInfos').innerHTML = "Essai numéro " + countTry;
+    if (countTry > 0)
+        document.getElementById('loadInfos').innerHTML = countTry > 5 ? "Chargement impossible..." : "Essai numéro " + countTry;
 
-    if (countTry > 5) {
-        document.getElementById('loadInfos').innerHTML = "Chargement impossible...";
-        setTimeout(() => {
+    if (countTry > 5)
+        return setTimeout(() => {
             window.location.assign(window.location.origin + "/");
         }, 3000);
-    } else if (!data)
-        $.get('/data/' + edtCookie.edtID + "/").then(data => loadEDT(++countTry, data));
-    else if (!!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
-        setTimeout(() => loadEDT(countTry), 500);
+
+    if (!data || !!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
+        setTimeout(() => loadEDT(countTry + 1), 500);
     else {
         document.title = "EDT : " + data.edtName + " Informatique";
         document.getElementById('update').innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
@@ -52,7 +47,7 @@ function loadEDT(countTry, data) {
 
                 data.color = getColorMatiere(data.title);
 
-                if (data.title.toLowerCase().includes('soutien') && !edtCookie.soutien) {
+                if (data.title.toLowerCase().includes('soutien') && !res.options.soutien) {
                     data.start = 0;
                     data.end = 0;
                 }
@@ -61,7 +56,7 @@ function loadEDT(countTry, data) {
             }
         });
 
-        loadCalendar(events, edtCookie);
+        loadCalendar(events, res.options);
         initTools(data);
     }
 }

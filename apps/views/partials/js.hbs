@@ -1,0 +1,30 @@
+<script src="/js/libs/jquery-3.4.1.min.js"></script>
+<script src="/js/libs/detectmobilebrowser.js"></script>
+<script>
+    refresh();
+
+    function refresh() {
+        let container = [$(".container")];
+        if (!container) return;
+
+        if (jQuery.browser.mobile)
+            container.forEach(el => {
+                el.removeClass("w-25");
+                el.removeClass("w-50");
+            });
+    }
+</script>
+
+<script src="/js/libs/bootstrap.min.js"></script>
+<script src="/js/libs/bootstrap-toggle.min.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-82384707-8"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'UA-82384707-8');
+</script>

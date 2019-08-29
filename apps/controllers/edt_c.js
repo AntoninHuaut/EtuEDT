@@ -1,21 +1,24 @@
-const apps = require('../apps.js');
+exports.edtData = async function (req, res) {
+    res.send({
+        edtID: req.session.edtID == null ? null : req.session.edtID,
+        options: req.session.options || null
+    })
+}
 
-module.exports = async function (req, res) {
-    let edtID = req.params.edtID;
+exports.selectEDT = async function (req, res) {
+    if (req.body.edtID == null || isNaN(req.body.edtID) || !req.body.options || !Array.isArray(req.body.options)) return res.status(400).send({
+        error: "parameters errors"
+    });
 
-    if (!edtID) {
-        res.sendFile(__basedir + '/static/edt.html');
-        return;
-    }
+    req.body.options.forEach(item => req.session.options[item.opt] = item.checked);
+    req.session.edtID = req.body.edtID;
+    res.status(200).send({
+        success: "200"
+    });
+}
 
-    let cache = apps.cache();
-
-    if (!cache[edtID] || edtID == "count" || !req.cookies.edtCookie)
-        res.redirect('/');
-    else {
-        let cookieValue = JSON.parse(req.cookies.edtCookie);
-        cookieValue['edtID'] = edtID;
-        res.cookie('edtCookie', JSON.stringify(cookieValue));
-        res.redirect('/edt');
-    }
+exports.showEDT = async function (req, res) {
+    res.render('edt', {
+        noheader: true
+    });
 }

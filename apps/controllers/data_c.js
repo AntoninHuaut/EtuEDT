@@ -1,35 +1,31 @@
-const apps = require('../apps.js');
+const edtManage = require('../utils/edtManage');
+
+const typeList = {
+    ID: "Id",
+    NAME: "Name"
+}
 
 module.exports = async function (req, res) {
     let edtID = req.params.edtID;
-    let dataOnly = req.params.dataOnly;
-    let edtIDType = isNaN(edtID) ? 'edtName' : 'edtID';
-    let cache = apps.cache();
-    dataOnly = !dataOnly ? false : dataOnly.toLowerCase() == 'raw';
+    const edtType = isNaN(edtID) ? typeList.NAME : typeList.ID;
+    const dataOnly = req.params.dataOnly == 'raw';
+    const cache = edtManage.getAll();
 
-    if (!edtID) {
-        let tmpCache = JSON.parse(JSON.stringify(cache));
-        for (let i = 0; i < tmpCache.count; i++) {
-            delete tmpCache[i].lastUpdate;
-            delete tmpCache[i].edtData;
-        }
-        res.send(tmpCache);
-        return;
-    } else if (edtIDType == 'edtName') {
-        if (edtID != "count")
-            for (let i = 0; i < cache.count; i++)
-                if (cache[i].edtName.replace(/ /g, '_') == edtID) {
-                    edtID = i;
-                    break;
-                }
+    if (!Array.isArray(cache))
+        return res.send(cache);
 
-        if (isNaN(edtID))
-            edtID = -1;
-    } else if (edtIDType == 'edtID' && !cache[edtID])
-        edtID = -1;
+    if (!edtID)
+        return res.send(edtManage.getEDTName());
+    else if (edtType == typeList.NAME) {
+        let el = cache.find(item => item.edtName.replace(/ /g, '_') == edtID);
+        edtID = el ? cache.indexOf(el) : null;
+    } else if (edtType == typeList.ID && !cache[edtID])
+        edtID = null;
 
-    if (edtID != -1)
+    if (edtID != null)
         res.send(dataOnly ? cache[edtID].edtData : cache[edtID]);
     else
-        res.send('{"error": "' + edtIDType + ' does not exist"}');
+        res.send({
+            "error": "edt" + edtType + " does not exist"
+        });
 }

@@ -1,0 +1,63 @@
+@font-face {
+    font-family: Ubuntu-Regular;
+    src: url('../fonts/ubuntu/Ubuntu-Regular.ttf');
+}
+
+@font-face {
+    font-family: Ubuntu-Bold;
+    src: url('../fonts/ubuntu/Ubuntu-Bold.ttf');
+}
+
+.navbar-brand {
+    vertical-align: middle;
+}
+
+.container-base {
+    padding-top: 65px;
+}
+
+.text {
+    font-family: Ubuntu-Bold;
+    color: #403866;
+    padding: 10px 0 2px 0;
+}
+
+.subTitle {
+    font-size: 20px;
+    text-align: center;
+    padding: 0px 0 25px 0;
+}
+
+.title {
+    font-size: 30px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0px 0 25px 0;
+}
+
+.form-control,
+.form-control:focus {
+    color: #554b8a;
+    background-color: #e6e6e6;
+    border-style: none;
+    padding: 0 20px 0 38px;
+    height: 62px;
+    width: 100%;
+}
+
+.form-control::placeholder {
+    color: #8f8fa1;
+}
+
+.form-btn {
+    font-family: Ubuntu-Bold;
+    margin-top: 20px;
+    width: 100%;
+    height: 50px;
+    background-color: rgb(130, 127, 254);
+    border-style: none;
+}
+
+.form-btn:hover {
+    background-color: rgb(64, 56, 102);
+}
