@@ -1,9 +1,9 @@
 {
     "port": 3005,
     "sessionSecret": "",
+    "accountToken": "Basic ",
     "edt": [{
         "name": "",
-        "account": "<etupass>@etu.unicaen.fr",
-        "basicToken": "Basic "
+        "account": "<num>@etu.unicaen.fr"
     }]
 }

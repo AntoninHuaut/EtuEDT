@@ -57,7 +57,7 @@ function httpGet(confEl, callback) {
         method: 'GET',
         url: 'https://webmail.unicaen.fr/home/' + confEl.account + '/Emploi%20du%20temps',
         headers: {
-            "Authorization": confEl.basicToken
+            "Authorization": config.accountToken
         },
         qs: {
             auth: 'ba',
