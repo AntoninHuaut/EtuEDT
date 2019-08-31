@@ -31,7 +31,7 @@ async function loadEDT(countTry, data) {
     if (!data || !!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
         setTimeout(() => loadEDT(countTry + 1), 500);
     else {
-        document.title = "EDT : " + data.edtName + " Informatique";
+        document.title = "EtuEDT - " + data.edtName;
         document.getElementById('update').innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
         document.getElementById('edtName').innerHTML = 'EDT : ' + data.edtName;
         let eventComps = new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent");

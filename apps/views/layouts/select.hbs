@@ -11,16 +11,25 @@
 		.toggle-handle {
 			background-color: white;
 		}
+
+		.left {
+			float: left;
+			margin: 5px 10px 0px 0px;
+			opacity: 0.5;
+		}
 	</style>
 </head>
 
 <body>
+	<img src="images/icons/favicon.ico" class="left" width="148px" />
+
 	<div class="container container-base w-50">
 		{{#if init}}
 		<div id="main">
 			<div>
 				<h1>Initialisation en cours...</h1>
 			</div>
+			<hr />
 		</div>
 
 		<script>
@@ -31,11 +40,13 @@
 			<div>
 				<h1>Veuillez sélectionner un emploi du temps :</h1>
 			</div>
-			<hr>
+			<hr />
 			<div id="btnList">
 				{{#each edtList}}
-				<button type="button" onclick='redirectEDT({{edtID}})'
-					class='btn btn-lg btn-{{color}}'>{{edtName}}</button>
+				<div style="text-align: center; margin-top: 10px;">
+					<button style="width: 300px; height: 60px;" type="button" onclick='redirectEDT({{edtID}})'
+						class='btn btn-lg btn-{{color}}'>{{edtName}}</button>
+				</div>
 				{{/each}}
 			</div>
 		</div>
@@ -44,7 +55,7 @@
 			<div>
 				<h1>Options :</h1>
 			</div>
-			<hr>
+			<hr />
 			<div id="optList">
 				{{#each options}}
 				<div id="{{name}}">
