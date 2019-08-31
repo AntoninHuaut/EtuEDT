@@ -13,6 +13,6 @@ exports.getEDTName = () => {
     return cache.getEDTName();
 }
 
-exports.getEDTNameWId = () => {
-    return cache.getEDTNameWId();
+exports.getEDTInfos = () => {
+    return cache.getEDTInfos();
 }

@@ -10,7 +10,7 @@ module.exports = class EDTCache {
             "error": "Initialization has not yet been performed"
         };
         this.cachedName = [];
-        this.cachedNameWId = [];
+        this.cachedInfos = [];
         this.init = false;
         this.refresh();
     }
@@ -27,8 +27,8 @@ module.exports = class EDTCache {
         return this.init ? this.cachedName : this.cached;
     }
 
-    getEDTNameWId() {
-        return this.init ? this.cachedNameWId : this.cached;
+    getEDTInfos() {
+        return this.init ? this.cachedInfos : this.cached;
     }
 
     refresh() {
@@ -46,10 +46,11 @@ module.exports = class EDTCache {
 
             this.cached = tmpCache;
             this.cachedName = this.cached.map(item => item.edtName);
-            this.cachedNameWId = this.cached.map(item => {
+            this.cachedInfos = this.cached.map(item => {
                 return {
                     "edtId": item.edtId,
-                    "edtName": item.edtName
+                    "edtName": item.edtName,
+                    "lastUpdate": item.lastUpdate
                 };
             });
             this.init = true;

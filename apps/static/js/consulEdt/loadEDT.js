@@ -10,15 +10,22 @@ var colorsList = randomColor({
 });
 
 var res;
-fetch("/edt/edtData").then(res => res.json()).then(result => {
-    res = result;
-    loadEDT(0);
-});
+initEDT();
 
-async function loadEDT(countTry, data) {
+function initEDT() {
+    let rawLinkICS = $("#rawLinkICS");
+    rawLinkICS.attr("data-clipboard-text", window.location.origin + rawLinkICS.attr("data-clipboard-text"));
+
+    fetch("/edt/edtData").then(res => res.json()).then(result => {
+        res = result;
+        loadEDT(0);
+    });
+}
+
+function loadEDT(countTry, data) {
     if (res.edtID == null) return window.location = '/';
 
-    if (countTry == 0) return $.get('/data/' + res.edtID + "/").then(data => loadEDT(countTry + 1, data));
+    if (countTry == 0) return fetch(`/data/${res.edtID}`).then(res => res.json()).then(data => loadEDT(countTry + 1, data));
 
     if (countTry > 0)
         document.getElementById('loadInfos').innerHTML = countTry > 5 ? "Chargement impossible..." : "Essai numéro " + countTry;
@@ -31,9 +38,6 @@ async function loadEDT(countTry, data) {
     if (!data || !!data.error || !data.edtData || data.edtData.includes('HTTP ERROR'))
         setTimeout(() => loadEDT(countTry + 1), 500);
     else {
-        document.title = "EtuEDT - " + data.edtName;
-        document.getElementById('update').innerHTML = 'Dernière update le ' + moment(data.lastUpdate).format('DD/MM/YYYY à HH[h]mm');
-        document.getElementById('edtName').innerHTML = 'EDT : ' + data.edtName;
         let eventComps = new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent");
 
         let events = eventComps.map(function (item) {
@@ -42,7 +46,7 @@ async function loadEDT(countTry, data) {
             else {
                 if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
 
-                let data = {
+                let dataEvent = {
                     "title": getValue(item, 'summary'),
                     "enseignant": getValue(item, 'description').split('\n')[4].replace('Enseignant : ', ''),
                     "start": getValue(item, 'dtstart').toJSDate(),
@@ -50,14 +54,14 @@ async function loadEDT(countTry, data) {
                     "location": getValue(item, '"location')
                 };
 
-                data.color = getColorMatiere(data.title);
+                dataEvent.color = getColorMatiere(dataEvent.title);
 
-                if (data.title.toLowerCase().includes('soutien') && !res.options.soutien) {
-                    data.start = 0;
-                    data.end = 0;
+                if (dataEvent.title.toLowerCase().includes('soutien') && !res.options.soutien) {
+                    dataEvent.start = 0;
+                    dataEvent.end = 0;
                 }
 
-                return data;
+                return dataEvent;
             }
         });
 

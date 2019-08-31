@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>EtuEDT - Chargement</title>
+    <title>EtuEDT - {{edtName}}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{>css}}
@@ -18,12 +18,22 @@
 </head>
 
 <body>
-    <div id="edtInfos">
-        <div id="edtNameLeft">
-            <span id="edtName"></span>
+    <nav class="navbar navbar-light bg-light py-0 py-md-0">
+        <div class="navbar-expand-lg">
+            <img src="images/icons/favicon.ico" class="left" width="32px" />
+            {{edtName}}
         </div>
-        <div id="update"></div>
-    </div>
+
+        <div>
+            {{lastUpdate}}
+        </div>
+
+        <div>
+            <i id="edtExportImg" title="Exporter l'emploi du temps" class="fas fa-image fa-lg"></i>
+            <i id="rawLinkICS" style="margin-left: 3px;" data-clipboard-text="/data/{{edtId}}/ics"
+                title="Lien vers l'emploi du temps en format ICS" class="clipboard fas fa-link fa-lg"></i>
+        </div>
+    </nav>
 
     <div id="load">
         <h1 id="loadInfos">Chargement...</h1>

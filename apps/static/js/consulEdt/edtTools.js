@@ -1,13 +1,10 @@
-var edtTool = document.getElementById('edtName');
-
 function initTools(edtData) {
     let edtName = edtData.edtName.replace(/ /g, '_');
     initIMGEDT(edtName, edtData.lastUpdate);
-    initClipboard(window.origin + "/data/" + edtData.edtId + "/raw");
+    initClipboard();
 }
 
 function initIMGEDT(edtName, lastUpdate) {
-    edtTool.innerHTML += ' <i id="edtExportImg" title="Exporter l\'emploi du temps" class="edtToolbar fas fa-image"></i> ';
     lastUpdate = moment(lastUpdate).format("[_]DD[-]MM[-]YYYY[_]HH[:]mm");
 
     setTimeout(() => {
@@ -19,8 +16,7 @@ function initIMGEDT(edtName, lastUpdate) {
     }, 10);
 }
 
-function initClipboard(edtRawUrl) {
-    edtTool.innerHTML = '<i data-clipboard-text="' + edtRawUrl + '" title="Obtenir le lien brut de l\'emploi du temps" class="edtToolbar clipboard fas fa-unlink"></i> ' + edtTool.innerHTML;
+function initClipboard() {
     let clipboard = new ClipboardJS('.clipboard');
 
     clipboard.on('success', function (e) {

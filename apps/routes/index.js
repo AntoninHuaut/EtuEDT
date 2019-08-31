@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const base_c = require('../controllers/base_c');
+const edtManage = require('../utils/edtManage');
+
+router.use(express.static('apps/static'));
 
 router.use((req, res, next) => {
     if (!req.session) req.session = {};
@@ -13,9 +16,15 @@ router.use((req, res, next) => {
     next();
 });
 
-router.use("/data", require("./data"));
-router.use("/edt", require("./edt"));
 router.use("/", require("./base"));
-router.use(express.static('apps/static'));
+router.use("/data", require("./data"));
+
+router.use((req, res, next) => {
+    if (!Array.isArray(edtManage.getAll())) return res.redirect('/');
+
+    next();
+});
+
+router.use("/edt", require("./edt"));
 
 module.exports = router;
