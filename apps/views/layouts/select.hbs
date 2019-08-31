@@ -16,6 +16,17 @@
 
 <body>
 	<div class="container container-base w-50">
+		{{#if init}}
+		<div id="main">
+			<div>
+				<h1>Initialisation en cours...</h1>
+			</div>
+		</div>
+
+		<script>
+			setTimeout(() => window.location.reload(), 1000);
+		</script>
+		{{else}}
 		<div id="main">
 			<div>
 				<h1>Veuillez sélectionner un emploi du temps :</h1>
@@ -38,15 +49,17 @@
 				{{#each options}}
 				<div id="{{name}}">
 					<label>
-						<input name="{{name}}" id="check-{{name}}" type="checkbox" {{#if checked}}checked{{/if}} data-toggle="toggle" data-onstyle="success"
-							data-offstyle="danger" data-on="<i class='fas fa-check'></i>"
-							data-off="<i class='fas fa-times'></i>" autocomplete="off" />
+						<input name="{{name}}" id="check-{{name}}" type="checkbox" {{#if checked}}checked{{/if}}
+							data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
+							data-on="<i class='fas fa-check'></i>" data-off="<i class='fas fa-times'></i>"
+							autocomplete="off" />
 					</label>
 					<span style="margin-left: 15px;" class="infos">Afficher les {{name}}s</span>
 				</div>
 				{{/each}}
 			</div>
 		</div>
+		{{/if}}
 	</div>
 
 	{{>js}}

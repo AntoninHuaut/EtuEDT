@@ -9,7 +9,9 @@ exports.getOptions = () => {
 
 exports.select = async function (req, res) {
     let edtList = edtManage.getEDTNameWId();
-    if (!edtManage.isInit()) return res.render('select');
+    if (!edtManage.isInit()) return res.render('select', {
+        init: true
+    });
 
     edtList = edtList.map(item => {
         return {

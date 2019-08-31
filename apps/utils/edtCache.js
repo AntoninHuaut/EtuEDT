@@ -6,7 +6,9 @@ const regexCString = new RegExp('\\?\\?', 'g');
 module.exports = class EDTCache {
     constructor() {
         this.refreshInterval = setInterval(() => this.refresh, 15 * 60 * 1000);
-        this.cached = JSON.parse('{"error": "Initialization has not yet been performed"}');
+        this.cached = {
+            "error": "Initialization has not yet been performed"
+        };
         this.cachedName = [];
         this.cachedNameWId = [];
         this.init = false;
