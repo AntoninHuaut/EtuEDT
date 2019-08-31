@@ -8,13 +8,13 @@ exports.getOptions = () => {
 }
 
 exports.select = async function (req, res) {
-    let edtList = edtManage.getEDTName();
+    let edtList = edtManage.getEDTNameWId();
     if (!edtManage.isInit()) return res.render('select');
 
     edtList = edtList.map(item => {
         return {
-            "edtID": edtList.indexOf(item),
-            "edtName": item,
+            "edtID": item.edtId,
+            "edtName": item.edtName,
             "color": getColor(edtList.indexOf(item))
         };
     });

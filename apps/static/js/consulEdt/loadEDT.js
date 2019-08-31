@@ -9,10 +9,13 @@ var colorsList = randomColor({
     alpha: 0.7
 });
 
-loadEDT(0);
+var res;
+fetch("/edt/edtData").then(res => res.json()).then(result => {
+    res = result;
+    loadEDT(0);
+});
 
 async function loadEDT(countTry, data) {
-    let res = await (fetch("/edt/edtData").then(res => res.json()));
     if (res.edtID == null) return window.location = '/';
 
     if (countTry == 0) return $.get('/data/' + res.edtID + "/").then(data => loadEDT(countTry + 1, data));
@@ -34,15 +37,17 @@ async function loadEDT(countTry, data) {
         let eventComps = new ICAL.Component(ICAL.parse(data.edtData.trim())).getAllSubcomponents("vevent");
 
         let events = eventComps.map(function (item) {
-            if (item.getFirstPropertyValue("class") != "PUBLIC") {
+            if (item.getFirstPropertyValue("class") != "PUBLIC")
                 return null;
-            } else {
+            else {
+                if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
+
                 let data = {
-                    "title": item.getFirstPropertyValue("summary"),
-                    "enseignant": item.getFirstPropertyValue('description').split('\n')[4].replace('Enseignant : ', ''),
-                    "start": item.getFirstPropertyValue("dtstart").toJSDate(),
-                    "end": item.getFirstPropertyValue("dtend").toJSDate(),
-                    "location": item.getFirstPropertyValue("location")
+                    "title": getValue(item, 'summary'),
+                    "enseignant": getValue(item, 'description').split('\n')[4].replace('Enseignant : ', ''),
+                    "start": getValue(item, 'dtstart').toJSDate(),
+                    "end": getValue(item, 'dtend').toJSDate(),
+                    "location": getValue(item, '"location')
                 };
 
                 data.color = getColorMatiere(data.title);
@@ -56,9 +61,23 @@ async function loadEDT(countTry, data) {
             }
         });
 
+        events = events.filter(el => el != null);
+
         loadCalendar(events, res.options);
         initTools(data);
     }
+}
+
+function getValue(item, value) {
+    return item.getFirstPropertyValue(value);
+}
+
+function hasValue(item) {
+    return !!getValue(item, 'summary') &&
+        !!getValue(item, 'description') &&
+        !!getValue(item, 'dtstart') &&
+        !!getValue(item, 'dtend') &&
+        !!getValue(item, 'location');
 }
 
 function getColorMatiere(mat) {

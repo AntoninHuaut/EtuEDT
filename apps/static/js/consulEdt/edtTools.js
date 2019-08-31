@@ -3,7 +3,7 @@ var edtTool = document.getElementById('edtName');
 function initTools(edtData) {
     let edtName = edtData.edtName.replace(/ /g, '_');
     initIMGEDT(edtName, edtData.lastUpdate);
-    initClipboard(window.origin + "/data/" + edtName + "/raw");
+    initClipboard(window.origin + "/data/" + edtData.edtId + "/raw");
 }
 
 function initIMGEDT(edtName, lastUpdate) {
@@ -42,4 +42,38 @@ function downloadURI(uri, name) {
     link.click();
     document.body.removeChild(link);
     delete link;
+}
+
+function keyUpdateCalendar(e) {
+    e = e || window.event;
+    let key = e.keyCode;
+    let index = views.indexOf(calendar.view.type);
+
+    if (key == '40') {
+        index--;
+        index = index < 0 ? views.length - 1 : index;
+    } else if (key == '38') {
+        index++;
+        index = index >= views.length ? 0 : index;
+    } else if (key == '37')
+        calendar.prev();
+    else if (key == '39')
+        calendar.next();
+    else if (key == '17')
+        calendar.today();
+    else
+        return true;
+
+    if (key == '40' || key == '38')
+        calendar.changeView(views[index]);
+
+    return false;
+}
+
+function getDateWFormat(jsDate) {
+    let mom = moment(new Date(jsDate));
+    let date = mom.format("HH");
+    date += mom.format("mm") == "00" ? ' h' : ':' + mom.format("mm");
+
+    return date;
 }

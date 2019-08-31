@@ -8,6 +8,7 @@ module.exports = class EDTCache {
         this.refreshInterval = setInterval(() => this.refresh, 15 * 60 * 1000);
         this.cached = JSON.parse('{"error": "Initialization has not yet been performed"}');
         this.cachedName = [];
+        this.cachedNameWId = [];
         this.init = false;
         this.refresh();
     }
@@ -24,6 +25,10 @@ module.exports = class EDTCache {
         return this.init ? this.cachedName : this.cached;
     }
 
+    getEDTNameWId() {
+        return this.init ? this.cachedNameWId : this.cached;
+    }
+
     refresh() {
         let tmpCache = [];
         let date = new Date();
@@ -35,17 +40,24 @@ module.exports = class EDTCache {
                 if (res[i].includes('HTTP ERROR') && !!this.cached[i] && this.cached[i].hasOwnProperty("edtData"))
                     tmpCache[i] = this.cached[i];
                 else
-                    tmpCache.push(new EDT(config.edt[i].name, date, res[i]));
+                    tmpCache.push(new EDT(config.edt[i].account, config.edt[i].name, date, res[i]));
 
             this.cached = tmpCache;
             this.cachedName = this.cached.map(item => item.edtName);
+            this.cachedNameWId = this.cached.map(item => {
+                return {
+                    "edtId": item.edtId,
+                    "edtName": item.edtName
+                };
+            });
             this.init = true;
         });
     }
 }
 
 class EDT {
-    constructor(edtName, lastUpdate, edtData) {
+    constructor(edtId, edtName, lastUpdate, edtData) {
+        this.edtId = edtId;
         this.edtName = edtName;
         this.lastUpdate = lastUpdate;
         this.edtData = edtData;
@@ -55,7 +67,7 @@ class EDT {
 function httpGet(confEl, callback) {
     const options = {
         method: 'GET',
-        url: 'https://webmail.unicaen.fr/home/' + confEl.account + '/Emploi%20du%20temps',
+        url: `https://webmail.unicaen.fr/home/${confEl.account}@etu.unicaen.fr/${confEl.edt}`,
         headers: {
             "Authorization": config.accountToken
         },

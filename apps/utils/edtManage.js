@@ -12,3 +12,7 @@ exports.getAll = () => {
 exports.getEDTName = () => {
     return cache.getEDTName();
 }
+
+exports.getEDTNameWId = () => {
+    return cache.getEDTNameWId();
+}

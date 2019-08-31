@@ -5,6 +5,11 @@
     font-weight: 450;
 }
 
+#edtInfos,
+.fc-left {
+    padding-left: 3px;
+}
+
 #edtNameLeft {
     position: absolute;
 }
@@ -15,11 +20,11 @@
 
 .edtToolbar {
     margin-left: 3px;
-    color: rgb(212, 0, 0);
+    color: rgb(33, 153, 33);
 }
 
 .edtToolbar:hover {
-    color: red;
+    color: rgb(33, 153, 33);
 }
 
 #load h1 {

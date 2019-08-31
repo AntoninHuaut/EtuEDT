@@ -4,6 +4,7 @@
     "accountToken": "Basic ",
     "edt": [{
         "name": "",
-        "account": "<num>@etu.unicaen.fr"
+        "account": "<etuNum>",
+        "edt": "Emploi%20du%20temps"
     }]
 }
