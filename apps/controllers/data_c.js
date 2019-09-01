@@ -2,7 +2,7 @@ const edtManage = require('../utils/edtManage');
 
 module.exports = async function (req, res) {
     let edtID = req.params.edtID;
-    const icsOnly = req.params.format == 'ics';
+    const format = req.params.format;
     const cache = edtManage.getAll();
 
     if (!Array.isArray(cache))
@@ -17,5 +17,8 @@ module.exports = async function (req, res) {
             "error": `edtId ${edtID} does not exist`
         });
 
-    res.send(icsOnly ? item[0].edtData : item[0]);
+    if (format == 'ics') return res.send(item[0].edtData);
+    if (format == 'json') return res.send(edtManage.toJson(item[0]));
+
+    res.send(item[0]);
 }
