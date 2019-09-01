@@ -14,7 +14,7 @@ initEDT();
 
 function initEDT() {
     let rawLinkICS = $("#rawLinkICS");
-    rawLinkICS.attr("data-clipboard-text", window.location.origin + rawLinkICS.attr("data-clipboard-text"));
+    rawLinkICS.attr("data-clipboard-text", window.location.origin.replace("https", "http") + rawLinkICS.attr("data-clipboard-text"));
 
     fetch("/edt/edtData").then(res => res.json()).then(result => {
         res = result;
