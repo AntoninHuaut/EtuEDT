@@ -6,7 +6,7 @@ This application was created to quickly access the timetables of the University 
 [*Application demo*](https://edt.maner.fr/ "Application demo")
 
 ## Running Locally
-> The use of the application requires changes in the code
+> The use of the application requires changes in the code  
 > Timetables must be shared with the main account used
 
 ```shell
