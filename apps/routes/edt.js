@@ -7,6 +7,6 @@ const urlencodedParser = bodyParser.urlencoded({
 
 router.post("/selectEDT", urlencodedParser, controller.selectEDT);
 router.get("/edtData", controller.edtData);
-router.get("/", controller.showEDT);
+router.get("/:edtID?", controller.showEDT);
 
 module.exports = router;

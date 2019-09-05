@@ -21,7 +21,7 @@ exports.selectEDT = async function (req, res) {
 }
 
 exports.showEDT = async function (req, res) {
-    let edtID = req.session.edtID;
+    let edtID = req.params.edtID || req.session.edtID;
     const cache = edtManage.getAll();
 
     let item = cache.filter(item => item.edtId == edtID);

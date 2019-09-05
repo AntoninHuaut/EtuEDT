@@ -2,14 +2,14 @@ const async = require('async');
 const request = require("request");
 const config = require('../config');
 const regexCString = new RegExp('\\?\\?', 'g');
+const ICAL = require('ical.js');
 
 module.exports = class EDTCache {
     constructor() {
-        this.refreshInterval = setInterval(() => this.refresh, 15 * 60 * 1000);
+        this.refreshInterval = setInterval(() => this.refresh(), config.refreshMinuts * 60 * 1000);
         this.cached = {
             "error": "Initialization has not yet been performed"
         };
-        this.cachedName = [];
         this.cachedInfos = [];
         this.init = false;
         this.refresh();
@@ -23,29 +23,35 @@ module.exports = class EDTCache {
         return this.cached;
     }
 
-    getEDTName() {
-        return this.init ? this.cachedName : this.cached;
-    }
-
     getEDTInfos() {
         return this.init ? this.cachedInfos : this.cached;
     }
 
     refresh() {
-        let tmpCache = [];
+        let cacheRefresh = this.init ? this.cached : [];
         let date = new Date();
 
         async.map(config.edt, httpGet, (err, res) => {
             if (err) return console.log(err);
 
-            for (let i = 0; i < res.length; i++)
-                if (res[i].includes('HTTP ERROR') && !!this.cached[i] && this.cached[i].hasOwnProperty("edtData"))
-                    tmpCache[i] = this.cached[i];
-                else
-                    tmpCache.push(new EDT(config.edt[i].account, config.edt[i].name, date, res[i]));
+            for (let i = 0; i < res.length; i++) {
+                if (cacheRefresh[i]) {
+                    if (res[i].includes('HTTP ERROR') && cacheRefresh[i].hasOwnProperty("edtIcs")) {
+                        cacheRefresh[i] = this.cached[i];
+                        continue;
+                    }
 
-            this.cached = tmpCache;
-            this.cachedName = this.cached.map(item => item.edtName);
+                    let item = cacheRefresh.find(item => item.edtId == config.edt[i].account);
+                    if (!item) continue;
+
+                    item.lastUpdate = date;
+                    item.edtIcs = res[i];
+                    item.setJSON();
+                } else
+                    cacheRefresh.push(new EDT(config.edt[i].account, config.edt[i].name, date, res[i]));
+            }
+
+            this.cached = cacheRefresh;
             this.cachedInfos = this.cached.map(item => {
                 return {
                     "edtId": item.edtId,
@@ -59,12 +65,62 @@ module.exports = class EDTCache {
 }
 
 class EDT {
-    constructor(edtId, edtName, lastUpdate, edtData) {
+    constructor(edtId, edtName, lastUpdate, edtIcs) {
         this.edtId = edtId;
         this.edtName = edtName;
         this.lastUpdate = lastUpdate;
-        this.edtData = edtData;
+        this.edtIcs = edtIcs;
+        this.setJSON();
     }
+
+    getICS() {
+        return this.edtIcs;
+    }
+
+    getJSON() {
+        return this.edtJson;
+    }
+
+    setJSON() {
+        this.edtJson = this.toJson();
+    }
+
+    toJson() {
+        if (!this.edtIcs || this.edtIcs.includes('HTTP ERROR')) return {
+            "error": this.edtId + " not available"
+        };
+
+        let eventComps = new ICAL.Component(ICAL.parse(this.edtIcs.trim())).getAllSubcomponents("vevent");
+
+        let events = eventComps.map(function (item) {
+            if (item.getFirstPropertyValue("class") != "PUBLIC")
+                return null;
+            else {
+                if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
+                return {
+                    "title": getValue(item, 'summary'),
+                    "enseignant": getValue(item, 'description').split('\n')[4].replace('Enseignant : ', ''),
+                    "start": getValue(item, 'dtstart').toJSDate(),
+                    "end": getValue(item, 'dtend').toJSDate(),
+                    "location": getValue(item, '"location')
+                };
+            }
+        });
+
+        return events.filter(el => el != null);
+    }
+}
+
+function getValue(item, value) {
+    return item.getFirstPropertyValue(value);
+}
+
+function hasValue(item) {
+    return !!getValue(item, 'summary') &&
+        !!getValue(item, 'description') &&
+        !!getValue(item, 'dtstart') &&
+        !!getValue(item, 'dtend') &&
+        !!getValue(item, 'location');
 }
 
 function httpGet(confEl, callback) {
