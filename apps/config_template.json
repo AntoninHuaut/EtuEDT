@@ -2,7 +2,7 @@
     "port": 3005,
     "sessionSecret": "",
     "accountToken": "Basic ",
-    "refreshMinuts": 15,
+    "refreshMinuts": 60,
     "edt": [{
         "name": "",
         "account": "<etuNum>",
