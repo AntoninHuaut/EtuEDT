@@ -1,21 +1,14 @@
 const async = require('async');
 const request = require("request");
+const moment = require("moment");
 const config = require('../config');
 const regexCString = new RegExp('\\?\\?', 'g');
 const ICAL = require('ical.js');
 
-/* On va éviter de se refaire ban le compte */
-const minMinuts = 15;
-const minTimeRefresh = minMinuts * 60 * 1000;
-var timeRefresh = (config.refreshMinuts || minMinuts) * 60 * 1000;
-// -
-
 module.exports = class EDTCache {
     constructor() {
-        if (!timeRefresh || timeRefresh < minTimeRefresh)
-            timeRefresh = minTimeRefresh;
-
-        this.refreshInterval = setInterval(() => this.refresh(), timeRefresh);
+        require('../checkConfig')();
+        this.refreshInterval = setInterval(() => this.refresh(), config.refreshMinuts * 60 * 1000);
 
         this.cached = {
             "error": "Initialization has not yet been performed"
@@ -38,8 +31,8 @@ module.exports = class EDTCache {
     }
 
     refresh() {
-        console.log(new Date(), "Refresh EDT");
-        
+        console.log(moment().format("DD/MM/YYYY HH:mm"), "Refresh EDT");
+
         let cacheRefresh = this.init ? this.cached : [];
         let date = new Date();
 
