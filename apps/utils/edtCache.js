@@ -131,7 +131,7 @@ function hasValue(item) {
 function httpGet(confEl, callback) {
     const options = {
         method: 'GET',
-        url: `https://webmail.unicaen.fr/home/${confEl.account}@etu.unicaen.fr/${confEl.edt}`,
+        url: `https://webmail.unicaen.fr/home/${config.mainAccount}@etu.unicaen.fr/${confEl.edt}`,
         headers: {
             "Authorization": config.accountToken
         },
