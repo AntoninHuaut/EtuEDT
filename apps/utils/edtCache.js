@@ -102,12 +102,13 @@ class EDT {
                 return null;
             else {
                 if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
+                let description = getValue(item, 'description').split('\n');
                 return {
                     "title": getValue(item, 'summary'),
-                    "enseignant": getValue(item, 'description').split('\n')[4].replace('Enseignant : ', ''),
+                    "enseignant": description[4].replace('Enseignant : ', ''),
                     "start": getValue(item, 'dtstart').toJSDate(),
                     "end": getValue(item, 'dtend').toJSDate(),
-                    "location": getValue(item, '"location')
+                    "location": description[0].replace('Salle : ', '')
                 };
             }
         });
@@ -154,11 +155,20 @@ function convertString(str) {
     str = str.replace(/Amphith\?\?\?\?tre/g, 'Amphi');
     let splited = str.split('\r');
 
-    for (let i = 0; i < splited.length; i++)
-        if (splited[i].startsWith('\nSUMMARY:') && splited[i].toLowerCase().includes('_s'))
-            splited[i] = splited[i].substring(0, splited[i].toLowerCase().indexOf('_s'));
+    for (let i = 0; i < splited.length; i++) {
+        splited[i] = convertStringSplit(splited, i, '_s');
+        splited[i] = convertStringSplit(splited, i, '_1');
+        splited[i] = convertStringSplit(splited, i, '_2');
+    }
 
     str = splited.join('');
 
     return str.replace(regexCString, 'e');
+}
+
+function convertStringSplit(splited, i, strSplit) {
+    if (splited[i].startsWith('\nSUMMARY:') && splited[i].toLowerCase().includes(strSplit))
+        return splited[i].substring(0, splited[i].toLowerCase().indexOf(strSplit));
+
+    return splited[i];
 }
