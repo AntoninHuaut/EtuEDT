@@ -41,7 +41,8 @@ module.exports = class EDTCache {
 
             for (let i = 0; i < res.length; i++) {
                 if (cacheRefresh[i]) {
-                    if (res[i].includes('HTTP ERROR') && cacheRefresh[i].hasOwnProperty("edtIcs")) {
+                    let resRQ = !(res[i].includes('HTTP ERROR') && cacheRefresh[i].hasOwnProperty("edtIcs"));
+                    if (!resRQ) {
                         cacheRefresh[i] = this.cached[i];
                         continue;
                     }
@@ -49,7 +50,7 @@ module.exports = class EDTCache {
                     let item = cacheRefresh.find(item => item.edtId == config.edt[i].account);
                     if (!item) continue;
 
-                    item.lastUpdate = date;
+                    if (resRQ) item.lastUpdate = date;
                     item.edtIcs = res[i];
                     item.setJSON();
                 } else
@@ -125,8 +126,7 @@ function hasValue(item) {
     return !!getValue(item, 'summary') &&
         !!getValue(item, 'description') &&
         !!getValue(item, 'dtstart') &&
-        !!getValue(item, 'dtend') &&
-        !!getValue(item, 'location');
+        !!getValue(item, 'dtend');
 }
 
 function httpGet(confEl, callback) {
