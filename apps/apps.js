@@ -1,9 +1,10 @@
-const hbs = require('hbs');
+const hbs = require('express-hbs');
 const web = require("express")();
 const bodyParser = require("body-parser");
 const session = require('express-session');
 const config = require("./config.json");
 const uuidv4 = require('uuid/v4');
+const path = require('path');
 require('dotenv').config();
 
 global.__basedir = __dirname;
@@ -14,10 +15,14 @@ web.use(bodyParser.urlencoded({
 }));
 web.use(bodyParser.json());
 
-hbs.registerPartials(__dirname + '/views/partials');
-web.engine('hbs', hbs.__express);
+web.engine('hbs', hbs.express4({
+    partialsDir: path.join(__basedir, '/views/partials'),
+    // layoutsDir: path.join(__basedir, '/views/layouts'),
+    // defaultLayout: path.join(__basedir, "/views/layouts/main"),
+}));
 web.set('view engine', 'hbs');
-web.set('views', __dirname + '/views/layouts');
+web.set('views', path.join(__basedir, '/views/layouts'));
+// web.set('views', path.join(__basedir, '/views/pages'));
 
 var cookieData = {
     path: '/',

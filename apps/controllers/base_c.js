@@ -21,6 +21,21 @@ exports.select = async function (req, res) {
         };
     });
 
+    let edtFinalList = [];
+
+    edtList.forEach(item => {
+        let name = item.edtName.split(" ")[0];
+        let itemInsert = edtFinalList.filter(i => i.name == name);
+
+        if (edtFinalList.filter(i => i.name == name).length == 0) edtFinalList.push({
+            name: name,
+            data: []
+        });
+
+        let index = itemInsert.length > 0 ? edtFinalList.indexOf(itemInsert[0]) : edtFinalList.length - 1;
+        edtFinalList[index].data.push(item);
+    });
+
     let convOptions = options.map(item => {
         let isCheck = req.session && req.session.options && req.session.options[item];
         return {
@@ -30,7 +45,7 @@ exports.select = async function (req, res) {
     });
 
     res.render('select', {
-        edtList: edtList,
+        edtList: edtFinalList,
         options: convOptions
     });
 }
