@@ -28,7 +28,7 @@ function loadCalendar(listEvents, options) {
         allDaySlot: false,
         allDayText: false,
         minTime: "08:00:00",
-        maxTime: "19:00:00",
+        maxTime: "22:30:00",
         nowIndicator: true,
         //
         // Methods
