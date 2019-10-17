@@ -107,4 +107,5 @@ function loadCalendar(listEvents, options) {
         calendar.next();
 
     document.onkeydown = keyUpdateCalendar;
+    defaultView();
 }

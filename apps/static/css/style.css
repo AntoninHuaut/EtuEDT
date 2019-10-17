@@ -8,6 +8,28 @@
     src: url('../fonts/ubuntu/Ubuntu-Bold.ttf');
 }
 
+@media screen and (max-width: 850px) {
+    .hideMobile {
+        display: none;
+    }
+
+    #main div h1 {
+        font-size: 25px;
+    }
+}
+
+@media screen and (min-width: 651px) and (max-width: 850px) {
+    button {
+        max-width: 250px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    button {
+        max-width: 150px;
+    }
+}
+
 .navbar-brand {
     vertical-align: middle;
 }

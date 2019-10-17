@@ -4,7 +4,7 @@
 <head>
 	<title>EtuEDT - Accueil</title>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	{{>css}}
 
 	<style>
@@ -21,9 +21,11 @@
 </head>
 
 <body>
-	<img src="images/icons/favicon.ico" class="left" width="148px" />
+	<div class="hideMobile left">
+		<img src="images/icons/favicon.ico" width="148px" />
+	</div>
 
-	<div class="container container-base w-50">
+	<div class="container container-base w-75">
 		{{#if init}}
 		<div id="main">
 			<div>

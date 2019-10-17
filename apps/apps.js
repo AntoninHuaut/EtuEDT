@@ -28,7 +28,7 @@ var cookieData = {
     path: '/',
     httpOnly: true,
     secure: false,
-    maxAge: null
+    maxAge: 2.592e+9 // 1 mois
 };
 
 if (process.env.NODE_ENV === 'production') {

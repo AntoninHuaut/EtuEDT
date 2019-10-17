@@ -30,6 +30,11 @@ function initClipboard() {
     });
 }
 
+function defaultView() {
+    if (jQuery.browser.mobile)
+        calendar.changeView("timeGridDay");
+}
+
 function downloadURI(uri, name) {
     let link = document.createElement("a");
     link.download = name;
