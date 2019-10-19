@@ -3,43 +3,42 @@
 }
 
 @media screen and (max-width: 850px) {
-    #extra {
-        display: none;
-    }
 
+    #updateInfosH,
     #update span:first-child {
         display: none;
     }
 
-    #update:before {
-        content: '🕑';
-    }
-
-    .fc-left {
-        margin-left: 0px;
-    }
-
     .fc-toolbar {
-        flex-direction: column;
+        flex-direction: row;
         font-size: 75%;
+        margin-bottom: 3px !important;
+    }
+
+    .fc-toolbar>*> :not(:first-child) {
+        margin-left: 0.15em !important;
     }
 
     .fc-toolbar .btn-group:first-child {
-        margin-top: 5px;
-        margin-bottom: 5px;
+        margin-top: 3px;
+        margin-bottom: 3px;
     }
 
     .fc-toolbar button {
-        font-size: 105%;
+        font-size: 95%;
         padding: .30rem .45rem;
     }
 
-    .fc-right>div {
+    .fc-left {
         flex: 0 0 50%;
     }
 
+    .fc-right>div {
+        flex: 0 0 30%;
+    }
+
     .fc-right>div:first-child {
-        flex: 0 0 50%;
+        flex: 0 0 70%;
     }
 
     .fc-right {
@@ -50,6 +49,11 @@
         flex-direction: row;
         flex-wrap: wrap;
     }
+}
+
+.fc-toolbar {
+    margin-top: 8px !important;
+    margin-bottom: 10px !important;
 }
 
 #load h1 {

@@ -1,19 +1,5 @@
 function initTools(edtData) {
-    let edtName = edtData.edtName.replace(/ /g, '_');
-    initIMGEDT(edtName, edtData.lastUpdate);
     initClipboard();
-}
-
-function initIMGEDT(edtName, lastUpdate) {
-    lastUpdate = moment(lastUpdate).format("[_]DD[-]MM[-]YYYY[_]HH[:]mm");
-
-    setTimeout(() => {
-        document.getElementById('edtExportImg').onclick = () => {
-            html2canvas(document.querySelector(".fc-view-container")).then(canvas => {
-                downloadURI(canvas.toDataURL(), edtName + lastUpdate + ".png");
-            });
-        }
-    }, 10);
 }
 
 function initClipboard() {
@@ -33,16 +19,6 @@ function initClipboard() {
 function defaultView() {
     if (jQuery.browser.mobile)
         calendar.changeView("timeGridDay");
-}
-
-function downloadURI(uri, name) {
-    let link = document.createElement("a");
-    link.download = name;
-    link.href = uri;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    delete link;
 }
 
 function keyUpdateCalendar(e) {

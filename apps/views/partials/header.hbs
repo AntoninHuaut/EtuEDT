@@ -1,0 +1,20 @@
+<nav id="navbar" class="navbar navbar-dark bg-primary">
+    <div class="navbar-expand-lg">
+        <a class="navbar-brand" href="/faq"><i class="fas fa-question"></i></a>
+        <a class="navbar-brand" href="/">Accueil</a>
+        {{#if edtID}}
+        <a class="navbar-brand" href="/edt">Consultation</a>
+        {{/if}}
+    </div>
+
+    {{#if edtInfos}}
+    <div id="extra" class="navbar-expand-lg navbar-brand" style="vertical-align: middle;">
+
+        <span title="Dernière mise à jour le {{edtInfos.updateInfosD}} à {{edtInfos.updateInfosH}}" id="updateInfosD">🕑
+            {{edtInfos.updateInfosD}}</span>
+        <span id="updateInfosH">à {{edtInfos.updateInfosH}}</span>
+        <i id="rawLinkICS" style="margin-left: 10px;" data-clipboard-text="/data/{{edtID}}/ics"
+            title="Lien vers l'emploi du temps en format ICS" class="clipboard fas fa-link fa-lg"></i>
+    </div>
+    {{/if}}
+</nav>

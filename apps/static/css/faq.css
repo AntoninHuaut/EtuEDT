@@ -1,0 +1,19 @@
+.blue {
+    color: #007bff;
+}
+
+.infos {
+    color: rgb(78, 78, 78);
+    font-size: 90%;
+    font-style: italic;
+}
+
+h3 {
+    font-size: 27px;
+    margin: 20px;
+    margin-top: 50px;
+}
+
+ol {
+    line-height: 2;
+}

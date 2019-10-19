@@ -18,6 +18,7 @@ router.use((req, res, next) => {
 
 router.use("/", require("./base"));
 router.use("/data", require("./data"));
+router.use("/faq", require("./faq"));
 
 router.use((req, res, next) => {
     if (!Array.isArray(edtManage.getAll())) return res.redirect('/');

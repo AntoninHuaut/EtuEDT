@@ -25,6 +25,14 @@
 }
 
 @media screen and (max-width: 650px) {
+    #navbar * {
+        font-size: 15px;
+    }
+
+    .navbar-brand {
+        margin-right: 0.25rem;
+    }
+    
     button {
         max-width: 150px;
     }
@@ -35,7 +43,7 @@
 }
 
 .container-base {
-    padding-top: 65px;
+    padding-top: 20px;
 }
 
 .text {

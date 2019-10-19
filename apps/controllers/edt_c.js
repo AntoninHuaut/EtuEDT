@@ -27,10 +27,14 @@ exports.showEDT = async function (req, res) {
     let item = cache.filter(item => item.edtId == edtID);
     if (!item || item.length == 0) return res.redirect('/');
 
+    let time = moment(item[0].lastUpdate);
+
     res.render('edt', {
-        noheader: true,
-        edtName: item[0].edtName,
-        edtId: edtID,
-        updateInfos: moment(item[0].lastUpdate).format('DD/MM/YYYY à HH[h]mm')
+        edtID: req.session.edtID,
+        edtInfos: {
+            edtName: item[0].edtName,
+            updateInfosD: time.format('DD/MM/YYYY'),
+            updateInfosH: time.format('HH[h]mm')
+        }
     });
 }

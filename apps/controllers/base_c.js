@@ -9,6 +9,7 @@ exports.getOptions = () => {
 exports.select = async function (req, res) {
     let edtList = edtManage.getEDTInfos();
     if (!edtManage.isInit()) return res.render('select', {
+        edtID: req.session.edtID,
         init: true
     });
 
@@ -54,6 +55,7 @@ exports.select = async function (req, res) {
     });
 
     res.render('select', {
+        edtID: req.session.edtID,
         edtList: edtFinalList,
         options: convOptions
     });
