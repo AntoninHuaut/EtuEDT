@@ -41,7 +41,7 @@ exports.select = async function (req, res) {
                 numAnnee: item.numAnnee,
                 data: []
             });
-        let indexAnnee = indexUniv ? dataAnnee.indexOf(indexUniv) : dataAnnee.length - 1;
+        let indexAnnee = itemAnnee ? dataAnnee.indexOf(itemAnnee) : dataAnnee.length - 1;
         dataAnnee[indexAnnee].data.push(item);
     });
 
