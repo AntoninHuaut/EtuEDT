@@ -31,6 +31,6 @@ exports.showEDT = async function (req, res) {
         noheader: true,
         edtName: item[0].edtName,
         edtId: edtID,
-        lastUpdate: `Dernière update le ${moment(item[0].lastUpdate).format('DD/MM/YYYY à HH[h]mm')}`
+        lastUpdate: `Dernière mise à jour le ${moment(item[0].lastUpdate).format('DD/MM/YYYY à HH[h]mm')}`
     });
 }
