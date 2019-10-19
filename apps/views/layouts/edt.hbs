@@ -27,11 +27,12 @@
             {{edtName}}
         </div>
 
-        <div>
-            {{lastUpdate}}
+        <div id="update">
+            <span>Dernière mise à jour le</span>
+            <span id="updateInfos">{{updateInfos}}</span>
         </div>
 
-        <div>
+        <div id="extra">
             <i id="edtExportImg" title="Exporter l'emploi du temps" class="fas fa-image fa-lg"></i>
             <i id="rawLinkICS" style="margin-left: 3px;" data-clipboard-text="/data/{{edtId}}/ics"
                 title="Lien vers l'emploi du temps en format ICS" class="clipboard fas fa-link fa-lg"></i>

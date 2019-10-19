@@ -1,5 +1,55 @@
 .fc-left {
-    padding-left: 3px;
+    margin-left: 5px;
+}
+
+@media screen and (max-width: 850px) {
+    #extra {
+        display: none;
+    }
+
+    #update span:first-child {
+        display: none;
+    }
+
+    #update:before {
+        content: '🕑';
+    }
+
+    .fc-left {
+        margin-left: 0px;
+    }
+
+    .fc-toolbar {
+        flex-direction: column;
+        font-size: 75%;
+    }
+
+    .fc-toolbar .btn-group:first-child {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .fc-toolbar button {
+        font-size: 105%;
+        padding: .30rem .45rem;
+    }
+
+    .fc-right>div {
+        flex: 0 0 50%;
+    }
+
+    .fc-right>div:first-child {
+        flex: 0 0 50%;
+    }
+
+    .fc-right {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
 }
 
 #load h1 {
