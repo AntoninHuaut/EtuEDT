@@ -1,11 +1,30 @@
-.toggle-handle {
-    background-color: white;
-}
-
 .left {
     float: left;
     margin: 5px 10px 0px 0px;
     opacity: 0.5;
+}
+
+.toggle-handle {
+    background-color: white;
+}
+
+.anneeDiv {
+    margin-top: 20px;
+}
+
+.anneeDiv>div {
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.anneeDiv>div>button {
+    width: 300px;
+    height: 60px;
+}
+
+.univDiv {
+    margin-bottom: 50px;
 }
 
 .edt {

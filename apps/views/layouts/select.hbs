@@ -36,19 +36,17 @@
 
 			<div>
 				{{#each edtList}}
-				<div style="margin-bottom: 50px;">
+				<div class="univDiv">
 					<h2 class="text-center">{{this.nomUniv}} :</h2>
 					<div class="d-flex flex-row justify-content-around">
 						{{#each this.data}}
 						<div>
 							<h2 class="text-center">{{this.numAnnee}}A :</h2>
 
-							<div style="margin-top: 20px;">
+							<div class="anneeDiv">
 								{{#each this.data}}
-								<div style="display: block; text-align: center; margin-top: 5px;">
-									<button
-										style="width: 300px; height: 60px;"
-										type="button" onclick='redirectEDT({{edtId}})'
+								<div>
+									<button type="button" onclick='redirectEDT("{{edtId}}")'
 										class='btn btn-lg edt edt{{@index}}'>{{edtName}}</button>
 								</div>
 								{{/each}}
