@@ -7,17 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	{{>css}}
 
-	<style>
-		.toggle-handle {
-			background-color: white;
-		}
-
-		.left {
-			float: left;
-			margin: 5px 10px 0px 0px;
-			opacity: 0.5;
-		}
-	</style>
+	<link href='/css/select.css' rel='stylesheet' />
 </head>
 
 <body>
@@ -44,16 +34,25 @@
 			</div>
 			<hr />
 
-			<div class="d-flex flex-row justify-content-around">
+			<div>
 				{{#each edtList}}
-				<div>
-					<h2 class="text-center">{{this.name}} :</h2>
-
-					<div style="margin-top: 20px;">
+				<div style="margin-bottom: 50px;">
+					<h2 class="text-center">{{this.nomUniv}} :</h2>
+					<div class="d-flex flex-row justify-content-around">
 						{{#each this.data}}
-						<div style="display: block; text-align: center; margin-top: 5px;">
-							<button style="width: 300px; height: 60px;" type="button" onclick='redirectEDT({{edtID}})'
-								class='btn btn-lg btn-{{color}}'>{{edtName}}</button>
+						<div>
+							<h2 class="text-center">{{this.numAnnee}}A :</h2>
+
+							<div style="margin-top: 20px;">
+								{{#each this.data}}
+								<div style="display: block; text-align: center; margin-top: 5px;">
+									<button
+										style="width: 300px; height: 60px;"
+										type="button" onclick='redirectEDT({{edtId}})'
+										class='btn btn-lg edt edt{{@index}}'>{{edtName}}</button>
+								</div>
+								{{/each}}
+							</div>
 						</div>
 						{{/each}}
 					</div>

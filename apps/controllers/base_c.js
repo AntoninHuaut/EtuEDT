@@ -1,6 +1,5 @@
 const edtManage = require('../utils/edtManage');
 
-const colors = ["primary", "success", "danger", "warning", "info", "dark"];
 const options = ["soutien", "enseignant"];
 
 exports.getOptions = () => {
@@ -15,25 +14,35 @@ exports.select = async function (req, res) {
 
     edtList = edtList.map(item => {
         return {
-            "edtID": item.edtId,
-            "edtName": item.edtName,
-            "color": getColor(edtList.indexOf(item))
+            edtId: item.edtId,
+            edtName: item.edtName,
+            numUniv: item.numUniv,
+            nomUniv: item.nomUniv,
+            numAnnee: item.numAnnee
         };
     });
 
     let edtFinalList = [];
 
     edtList.forEach(item => {
-        let name = item.edtName.split(" ")[0];
-        let itemInsert = edtFinalList.filter(i => i.name == name);
+        let itemUniv = edtFinalList.find(subItem => subItem.numUniv == item.numUniv);
+        if (!itemUniv)
+            edtFinalList.push({
+                numUniv: item.numUniv,
+                nomUniv: item.nomUniv,
+                data: []
+            });
+        let indexUniv = itemUniv ? edtFinalList.indexOf(itemUniv) : edtFinalList.length - 1;
+        let dataAnnee = edtFinalList[indexUniv].data;
 
-        if (edtFinalList.filter(i => i.name == name).length == 0) edtFinalList.push({
-            name: name,
-            data: []
-        });
-
-        let index = itemInsert.length > 0 ? edtFinalList.indexOf(itemInsert[0]) : edtFinalList.length - 1;
-        edtFinalList[index].data.push(item);
+        let itemAnnee = dataAnnee.find(subItem => subItem.numAnnee == item.numAnnee);
+        if (!itemAnnee)
+            dataAnnee.push({
+                numAnnee: item.numAnnee,
+                data: []
+            });
+        let indexAnnee = indexUniv ? dataAnnee.indexOf(indexUniv) : dataAnnee.length - 1;
+        dataAnnee[indexAnnee].data.push(item);
     });
 
     let convOptions = options.map(item => {
@@ -48,8 +57,4 @@ exports.select = async function (req, res) {
         edtList: edtFinalList,
         options: convOptions
     });
-}
-
-function getColor(i) {
-    return colors[i % colors.length];
 }

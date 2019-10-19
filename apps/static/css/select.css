@@ -1,0 +1,43 @@
+.toggle-handle {
+    background-color: white;
+}
+
+.left {
+    float: left;
+    margin: 5px 10px 0px 0px;
+    opacity: 0.5;
+}
+
+.edt {
+    color: #fff;
+}
+
+.edt0 {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.edt1 {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.edt2 {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.edt3 {
+    background-color: #72cc29;
+    border-color: #72cc29;
+}
+
+.edt4 {
+    background-color: #ffc000;
+    border-color: #ffc000;
+}
+
+.edt5 {
+    background-color: #ff7b07;
+    border-color: #ff7b07;
+}

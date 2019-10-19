@@ -4,9 +4,11 @@
     "accountToken": "Basic ",
     "mainAccount": "<etuNum>",
     "refreshMinuts": 60,
-    "edt": [{
-        "name": "",
-        "account": "<etuNum>",
-        "edt": "Emploi%20du%20temps"
-    }]
+    "sql": {
+        "host": "",
+        "port": 3306,
+        "database": "",
+        "user": "",
+        "password": ""
+    }
 }

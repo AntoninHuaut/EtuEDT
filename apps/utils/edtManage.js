@@ -1,4 +1,4 @@
-const EDTCache = require('./edtCache');
+const EDTCache = require('./EDTCache');
 const cache = new EDTCache();
 
 exports.isInit = () => {
