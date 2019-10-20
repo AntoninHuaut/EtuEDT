@@ -22,10 +22,11 @@ function handleTouchMove(evt) {
     if (Math.abs(xDiff) > Math.abs(yDiff)) {
         if (xDiff > 0) interactRight();
         else interactLeft();
-    } else {
-        if (yDiff > 0) interactDown();
-        else interactUp();
-    } 
+    }
+    /*else {
+           if (yDiff > 0) interactDown();
+           else interactUp();
+       }*/
 };
 
 function keyUpdateCalendar(e) {
