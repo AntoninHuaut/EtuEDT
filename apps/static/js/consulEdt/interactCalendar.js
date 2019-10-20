@@ -20,11 +20,11 @@ function handleTouchMove(evt) {
     yDown = null;
 
     if (Math.abs(xDiff) > Math.abs(yDiff)) {
-        if (xDiff > 0) interactLeft();
-        else interactRight();
+        if (xDiff > 0) interactRight();
+        else interactLeft();
     } else {
-        if (yDiff > 0) interactUp();
-        else interactDown();
+        if (yDiff > 0) interactDown();
+        else interactUp();
     } 
 };
 
