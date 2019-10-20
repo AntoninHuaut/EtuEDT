@@ -2,6 +2,7 @@ const hbs = require('express-hbs');
 const web = require("express")();
 const bodyParser = require("body-parser");
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const config = require("./config.json");
 const uuidv4 = require('uuid/v4');
 const path = require('path');
@@ -36,6 +37,8 @@ if (process.env.NODE_ENV === 'production') {
     cookieData.secure = true;
 }
 
+var sessionStore = new MySQLStore(require('./sql').getOptions());
+
 web.use(session({
     genid: () => {
         return uuidv4();
@@ -43,6 +46,7 @@ web.use(session({
     secret: config.sessionSecret,
     name: "etuedt_session",
     saveUninitialized: false,
+    store: sessionStore,
     resave: true,
     proxy: true,
     cookie: cookieData

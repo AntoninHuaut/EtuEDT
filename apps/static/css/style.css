@@ -26,11 +26,11 @@
 
 @media screen and (max-width: 650px) {
     #navbar * {
-        font-size: 15px;
+        font-size: 16.5px;
     }
 
     .navbar-brand {
-        margin-right: 0.25rem;
+        margin-right: 0.35rem;
     }
     
     button {

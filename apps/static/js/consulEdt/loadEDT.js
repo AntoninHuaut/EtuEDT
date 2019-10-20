@@ -50,8 +50,8 @@ function loadEDT(countTry, data) {
             return item;
         });
 
-        loadCalendar(events, res.options);
         initTools(data[0]);
+        loadCalendar(events, res.options);
     }
 }
 

@@ -1,5 +1,24 @@
-function initTools(edtData) {
+var edtData;
+
+function initTools(tmpEdtData) {
+    edtData = tmpEdtData;
     initClipboard();
+    loadEDTName();
+}
+
+function loadEDTName() {
+    ready('.fc-view-container', calendarView => {
+        if(document.querySelector('#calendarView')) return;
+        
+        let div = document.createElement('div');
+        div.style.textAlign = "center";
+        div.id = "calendarView";
+        let span = document.createElement('span');
+        span.style.fontSize = "24px";
+        span.textContent = edtData.edtName;
+        div.append(span);
+        calendarView.insertAdjacentElement("afterbegin", div);
+    });
 }
 
 function initClipboard() {
