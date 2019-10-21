@@ -51,11 +51,11 @@ module.exports = class EDTCache {
             let item = cacheRefresh.find(item => item.edtId == edtList[i].etupass);
 
             if (!!item) {
-                if (!res[i].includes('HTTP ERROR'))
+                if (!res[i].includes('HTTP ERROR')) {
                     item.lastUpdate = date;
-
-                item.edtIcs = res[i];
-                item.setJSON();
+                    item.edtIcs = res[i];
+                    item.setJSON();
+                }
             } else
                 cacheRefresh.push(new EDT(edtList[i], date, res[i]));
         }
