@@ -6,6 +6,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const config = require("./config.json");
 const uuidv4 = require('uuid/v4');
 const path = require('path');
+const swStats = require('swagger-stats');
 require('dotenv').config();
 
 global.__basedir = __dirname;
@@ -24,6 +25,14 @@ web.engine('hbs', hbs.express4({
 web.set('view engine', 'hbs');
 web.set('views', path.join(__basedir, '/views/layouts'));
 // web.set('views', path.join(__basedir, '/views/pages'));
+
+web.use(swStats.getMiddleware({
+    uriPath: '/metrics',
+    authentication: true,
+    onAuthenticate: function (req, username, password) {
+        return ((username === config.swagger.username) && (password === config.swagger.password));
+    }
+}));
 
 var cookieData = {
     path: '/',

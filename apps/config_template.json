@@ -4,6 +4,10 @@
     "accountToken": "Basic ",
     "mainAccount": "<etuNum>",
     "refreshMinuts": 60,
+    "swagger": {
+        "username": "",
+        "password": ""
+    },
     "sql": {
         "host": "",
         "port": 3306,
