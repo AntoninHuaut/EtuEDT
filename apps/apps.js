@@ -17,6 +17,8 @@ web.use(bodyParser.urlencoded({
 }));
 web.use(bodyParser.json());
 
+require('./utils/hbsHelper')();
+
 web.engine('hbs', hbs.express4({
     partialsDir: path.join(__basedir, '/views/partials'),
     // layoutsDir: path.join(__basedir, '/views/layouts'),

@@ -17,6 +17,18 @@
 		<img src="images/icons/favicon.ico" width="148px" />
 	</div>
 
+	<div class="hideMobile right">
+		<a href="/toggleTheme">
+			<button class="btn btn-lg">
+				{{#isEquals darkTheme false}}
+				<i class="fas fa-sun"></i> Mode journée
+				{{else}}
+				<i class="fas fa-moon"></i> Mode nuit
+				{{/isEquals}}
+			</button>
+		</a>
+	</div>
+
 	<div class="container container-base w-75">
 		{{#if init}}
 		<div id="main">

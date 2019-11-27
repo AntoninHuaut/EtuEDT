@@ -57,6 +57,7 @@ exports.select = async function (req, res) {
     res.render('select', {
         edtID: req.session.edtID,
         edtList: edtFinalList,
-        options: convOptions
+        options: convOptions,
+        darkTheme: req.session.darkTheme
     });
 }

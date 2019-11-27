@@ -35,6 +35,7 @@ exports.showEDT = async function (req, res) {
             edtName: item[0].edtName,
             updateInfosD: time.format('DD/MM/YYYY'),
             updateInfosH: time.format('HH[h]mm')
-        }
+        },
+        darkTheme: req.session.darkTheme
     });
 }

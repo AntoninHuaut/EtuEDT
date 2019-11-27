@@ -4,6 +4,12 @@
     opacity: 0.5;
 }
 
+.right {
+    float: right;
+    margin: 5px 10px 0px 0px;
+    opacity: 0.5;
+}
+
 .toggle-handle {
     background-color: white;
 }
