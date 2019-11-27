@@ -4,15 +4,20 @@
     refresh();
 
     function refresh() {
-        let container = [$(".container")];
-        if (!container) return;
+        const container = [$(".container")];
+        const float = [$('.noFloatMobile')];
 
-        if (jQuery.browser.mobile)
-            container.forEach(el => {
-                el.removeClass("w-25");
-                el.removeClass("w-50");
-                el.removeClass("w-75");
-            });
+        if (jQuery.browser.mobile) {
+            if (container)
+                container.forEach(el => {
+                    el.removeClass("w-25");
+                    el.removeClass("w-50");
+                    el.removeClass("w-75");
+                });
+
+            if (float)
+                float.forEach(item => item.removeClass(['noFloatMobile', 'right', 'left']));
+        }
     }
 </script>
 
