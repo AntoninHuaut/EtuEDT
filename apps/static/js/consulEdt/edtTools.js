@@ -7,6 +7,7 @@ function initTools(tmpEdtData) {
 }
 
 function loadEDTName() {
+    document.title = edtData.edtName;
     ready('.fc-view-container', calendarView => {
         if (document.querySelector('#calendarView')) return;
 

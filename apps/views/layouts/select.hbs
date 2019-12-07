@@ -60,8 +60,8 @@
 							<div class="anneeDiv">
 								{{#each this.data}}
 								<div>
-									<button type="button" onclick='redirectEDT("{{edtId}}")'
-										class='btn btn-lg edt edt{{@index}}'>{{edtName}}</button>
+									<a href="/edt/{{edtId}}"><button type="button"
+											class='btn btn-lg edt edt{{@index}}'>{{edtName}}</button></a>
 								</div>
 								{{/each}}
 							</div>
@@ -75,17 +75,22 @@
 
 		<div style="margin-top: 50px;">
 			<div>
-				<h1>Options :</h1>
+				<h1>
+					<span style="vertical-align: middle;">
+						<img id="optionLoader" style="display: none; width: 48px;" src="/images/loader.svg" />
+						Options :
+					</span>
+				</h1>
 			</div>
 			<hr />
 			<div id="optList">
 				{{#each options}}
 				<div id="{{name}}">
 					<label>
-						<input name="{{name}}" id="check-{{name}}" type="checkbox" {{#if checked}}checked{{/if}}
-							data-toggle="toggle" data-onstyle="success" data-offstyle="danger"
-							data-on="<i class='fas fa-check'></i>" data-off="<i class='fas fa-times'></i>"
-							autocomplete="off" />
+						<input name="{{name}}" class="optionInput" id="check-{{name}}" type="checkbox"
+							{{#if checked}}checked{{/if}} data-toggle="toggle" data-onstyle="success"
+							data-offstyle="danger" data-on="<i class='fas fa-check'></i>"
+							data-off="<i class='fas fa-times'></i>" autocomplete="off" />
 					</label>
 					<span style="margin-left: 15px;" class="infos">Afficher les {{name}}s</span>
 				</div>

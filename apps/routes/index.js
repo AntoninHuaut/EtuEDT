@@ -21,6 +21,7 @@ router.use("/", require("./base"));
 router.use("/toggleTheme", require("./toggleTheme"));
 router.use("/data", require("./data"));
 router.use("/faq", require("./faq"));
+router.use("/option", require("./option"));
 
 router.use((req, res, next) => {
     if (!Array.isArray(edtManage.getAll())) return res.redirect('/');

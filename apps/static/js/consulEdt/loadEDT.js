@@ -1,13 +1,14 @@
-var matExcluList = ['TD', 'TP', 'CM', 'CC', 'CTP'];
-var colors = {
+const matExcluList = ['TD', 'TP', 'CM', 'CC', 'CTP'];
+const colors = {
     increment: 0
 };
-var colorsList = randomColor({
+const colorsList = randomColor({
     count: 100,
     seed: 96369169,
     format: 'rgba',
     alpha: 0.7
 });
+const regexNumber = /(\d+)/g;
 
 var res;
 initEDT();
@@ -16,7 +17,10 @@ function initEDT() {
     let rawLinkICS = $("#rawLinkICS");
     rawLinkICS.attr("data-clipboard-text", window.location.origin.replace("https", "http") + rawLinkICS.attr("data-clipboard-text"));
 
-    fetch("/edt/edtData").then(res => res.json()).then(result => {
+    const resRegex = window.location.pathname.match(regexNumber);
+    const extra = resRegex ? "/" + resRegex[0] : "";
+
+    fetch(`/edt/edtData${extra}`).then(res => res.json()).then(result => {
         res = result;
         loadEDT(0);
     });
