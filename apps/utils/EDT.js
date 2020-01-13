@@ -44,25 +44,29 @@ module.exports = class EDT {
             "error": this.edtId + " not available"
         };
 
-        let eventComps = new ICAL.Component(ICAL.parse(this.edtIcs.trim())).getAllSubcomponents("vevent");
+        try {
+            let eventComps = new ICAL.Component(ICAL.parse(this.edtIcs.trim())).getAllSubcomponents("vevent");
 
-        let events = eventComps.map(function (item) {
-            if (item.getFirstPropertyValue("class") != "PUBLIC")
-                return null;
-            else {
-                if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
-                let description = getValue(item, 'description').split('\n');
-                return {
-                    "title": getValue(item, 'summary'),
-                    "enseignant": description[4].replace('Enseignant : ', ''),
-                    "start": getValue(item, 'dtstart').toJSDate(),
-                    "end": getValue(item, 'dtend').toJSDate(),
-                    "location": description[0].replace('Salle : ', '')
-                };
-            }
-        });
+            let events = eventComps.map(function (item) {
+                if (item.getFirstPropertyValue("class") != "PUBLIC")
+                    return null;
+                else {
+                    if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
+                    let description = getValue(item, 'description').split('\n');
+                    return {
+                        "title": getValue(item, 'summary'),
+                        "enseignant": description[4].replace('Enseignant : ', ''),
+                        "start": getValue(item, 'dtstart').toJSDate(),
+                        "end": getValue(item, 'dtend').toJSDate(),
+                        "location": description[0].replace('Salle : ', '')
+                    };
+                }
+            });
 
-        return events.filter(el => el != null);
+            return events.filter(el => el != null);
+        } catch (ex) {
+            return [];
+        }
     }
 }
 
