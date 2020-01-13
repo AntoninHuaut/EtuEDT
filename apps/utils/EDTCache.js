@@ -1,5 +1,5 @@
 const async = require('async');
-const request = require("request");
+const fetch = require("node-fetch");
 const moment = require("moment");
 const config = require('../config');
 const sql = require('../sql');
@@ -36,12 +36,19 @@ module.exports = class EDTCache {
 
         sql.getAllEDT()
             .catch(err => console.error(err))
-            .then(edtList => async.map(edtList, httpGet, (err, res) => this.httpRes(err, res, edtList)));
+            .then(edtList => {
+                const rqList = edtList.map(edt => requestEdt(edt));
+
+                Promise.all(rqList)
+                    .then(res => {
+                        res = res.map(res => convertString(res));
+                        this.updateEdt(edtList, res);
+                    })
+                    .catch(err => console.error(now(), "[Catch]", err));
+            });
     }
 
-    httpRes(err, res, edtList) {
-        if (err) return console.error(now(), err);
-
+    updateEdt(edtList, res) {
         let cacheRefresh = this.init ? this.cached : [];
         let date = new Date();
         let ignoreOldEntries = [];
@@ -70,23 +77,19 @@ module.exports = class EDTCache {
     }
 }
 
-function httpGet(edtSql, callback) {
-    const options = {
+function requestEdt(edtSql) {
+    const url = edtSql.zimbraUniv.replace("${etupass}", config.mainAccount).replace("${nomEDT}", edtSql.nomEDT);
+    const params = new URLSearchParams({
+        auth: 'ba',
+        fmt: 'ics'
+    });
+
+    return fetch(url + '?' + params, {
         method: 'GET',
-        url: edtSql.zimbraUniv.replace("${etupass}", config.mainAccount).replace("${nomEDT}", edtSql.nomEDT),
-        headers: {
+        headers: new fetch.Headers({
             "Authorization": config.accountToken
-        },
-        qs: {
-            auth: 'ba',
-            fmt: 'ics'
-        }
-    };
-    request(options,
-        function (err, res, body) {
-            callback(err, convertString(body));
-        }
-    );
+        })
+    }).then(res => res.text());
 }
 
 function convertString(str) {

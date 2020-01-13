@@ -8,6 +8,7 @@ const uuidv4 = require('uuid/v4');
 const path = require('path');
 const swStats = require('swagger-stats');
 require('dotenv').config();
+require('./utils/logger');
 
 global.__basedir = __dirname;
 
