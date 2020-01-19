@@ -4,7 +4,8 @@ const moment = require("moment");
 const config = require('../config');
 const sql = require('../sql');
 const EDT = require('./EDT');
-const regexCString = new RegExp('\\?\\?', 'g');
+
+const NB_WEEKS = 52;
 
 module.exports = class EDTCache {
     constructor() {
@@ -54,8 +55,8 @@ module.exports = class EDTCache {
         let ignoreOldEntries = [];
 
         for (let i = 0; i < res.length; i++) {
-            ignoreOldEntries.push(edtList[i].etupass);
-            let item = cacheRefresh.find(item => item.edtId == edtList[i].etupass);
+            ignoreOldEntries.push(edtList[i].resources);
+            let item = cacheRefresh.find(item => item.edtId == edtList[i].resources);
 
             if (!!item) {
                 if (!res[i].includes('HTTP ERROR')) {
@@ -78,26 +79,20 @@ module.exports = class EDTCache {
 }
 
 function requestEdt(edtSql) {
-    const url = edtSql.zimbraUniv.replace("${etupass}", config.mainAccount).replace("${nomEDT}", edtSql.nomEDT);
+    const url = edtSql.adeEta.replace("{resources}", edtSql.resources).replace("{projectId}", edtSql.projectId).replace("{nbWeeks}", NB_WEEKS);
     const params = new URLSearchParams({
-        auth: 'ba',
-        fmt: 'ics'
+        calType: 'ical',
+        nbWeeks: NB_WEEKS
     });
 
-    return fetch(url + '?' + params, {
-        method: 'GET',
-        headers: new fetch.Headers({
-            "Authorization": config.accountToken
-        })
-    }).then(res => res.text());
+    return fetch(url + '&' + params).then(res => res.text());
 }
 
 function convertString(str) {
     if (!str)
         return str;
 
-    str = str.replace(/Amphith\?\?\?\?tre/g, 'Amphi');
-    let splited = str.split('\r');
+    const splited = str.split('\r');
 
     for (let i = 0; i < splited.length; i++) {
         splited[i] = convertStringSplit(splited, i, '_s');
@@ -107,7 +102,7 @@ function convertString(str) {
 
     str = splited.join('');
 
-    return str.replace(regexCString, 'e');
+    return str;
 }
 
 function convertStringSplit(splited, i, strSplit) {

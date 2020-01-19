@@ -17,8 +17,8 @@ exports.select = async function (req, res) {
         return {
             edtId: item.edtId,
             edtName: item.edtName,
-            numUniv: item.numUniv,
-            nomUniv: item.nomUniv,
+            numEta: item.numEta,
+            nomEta: item.nomEta,
             numAnnee: item.numAnnee
         };
     });
@@ -26,15 +26,15 @@ exports.select = async function (req, res) {
     let edtFinalList = [];
 
     edtList.forEach(item => {
-        let itemUniv = edtFinalList.find(subItem => subItem.numUniv == item.numUniv);
-        if (!itemUniv)
+        let itemEta = edtFinalList.find(subItem => subItem.numEta == item.numEta);
+        if (!itemEta)
             edtFinalList.push({
-                numUniv: item.numUniv,
-                nomUniv: item.nomUniv,
+                numEta: item.numEta,
+                nomEta: item.nomEta,
                 data: []
             });
-        let indexUniv = itemUniv ? edtFinalList.indexOf(itemUniv) : edtFinalList.length - 1;
-        let dataAnnee = edtFinalList[indexUniv].data;
+        let indexEta = itemEta ? edtFinalList.indexOf(itemEta) : edtFinalList.length - 1;
+        let dataAnnee = edtFinalList[indexEta].data;
 
         let itemAnnee = dataAnnee.find(subItem => subItem.numAnnee == item.numAnnee);
         if (!itemAnnee)

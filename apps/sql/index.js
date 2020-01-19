@@ -8,8 +8,22 @@ function initTable() {
         input: fs.createReadStream('./apps/sql/table.sql'),
         terminal: false
     });
-    let con = this.getConnection();
-    rl.on('line', chunk => con.query(chunk.toString('utf-8'), (err) => {}));
+
+    let con = exports.getConnection();
+    let line = "";
+
+    rl.on('line', chunk => {
+        line += chunk.toString('utf-8');
+        if (!line.trim().endsWith(';')) return;
+
+        line = line.replace(/(\r\n|\n|\r)/gm, '');
+        con.query(line, (err) => {
+            if (err && !err.sqlMessage.includes('already exists'))
+                console.error(err)
+        });
+        line = "";
+    });
+
     rl.on('close', () => con.end());
 }
 

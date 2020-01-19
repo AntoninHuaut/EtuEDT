@@ -9,6 +9,7 @@ const path = require('path');
 const swStats = require('swagger-stats');
 require('dotenv').config();
 require('./utils/logger');
+require('./sql').initTable();
 
 global.__basedir = __dirname;
 

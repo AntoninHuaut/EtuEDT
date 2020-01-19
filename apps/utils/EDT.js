@@ -2,13 +2,13 @@ const ICAL = require('ical.js');
 
 module.exports = class EDT {
     constructor(edtData, lastUpdate, edtIcs) {
-        this.numUniv = edtData.numUniv;
-        this.nomUniv = edtData.nomUniv;
+        this.numEta = edtData.numEta;
+        this.nomEta = edtData.nomEta;
         this.numAnnee = edtData.numAnnee;
         this.numTP = edtData.numTP;
         this.nomEDT = edtData.nomEDT;
         this.edtName = this.numAnnee + "A TP " + this.numTP;
-        this.edtId = edtData.etupass;
+        this.edtId = edtData.resources;
         this.lastUpdate = lastUpdate;
         this.edtIcs = edtIcs;
         this.setJSON();
@@ -16,8 +16,8 @@ module.exports = class EDT {
 
     getAPIData() {
         return {
-            numUniv: this.numUniv,
-            nomUniv: this.nomUniv,
+            numEta: this.numEta,
+            nomEta: this.nomEta,
             numAnnee: this.numAnnee,
             numTP: this.numTP,
             nomEDT: this.nomEDT,
@@ -48,19 +48,16 @@ module.exports = class EDT {
             let eventComps = new ICAL.Component(ICAL.parse(this.edtIcs.trim())).getAllSubcomponents("vevent");
 
             let events = eventComps.map(function (item) {
-                if (item.getFirstPropertyValue("class") != "PUBLIC")
-                    return null;
-                else {
-                    if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
-                    let description = getValue(item, 'description').split('\n');
-                    return {
-                        "title": getValue(item, 'summary'),
-                        "enseignant": description[4].replace('Enseignant : ', ''),
-                        "start": getValue(item, 'dtstart').toJSDate(),
-                        "end": getValue(item, 'dtend').toJSDate(),
-                        "location": description[0].replace('Salle : ', '')
-                    };
-                }
+                if (!hasValue(item) || getValue(item, 'description').split('\n').length < 5) return null;
+
+                let description = getValue(item, 'description').split('\n');
+                return {
+                    "title": getValue(item, 'summary'),
+                    "enseignant": getEnseignant(description),
+                    "start": getValue(item, 'dtstart').toJSDate(),
+                    "end": getValue(item, 'dtend').toJSDate(),
+                    "location": getValue(item, 'location')
+                };
             });
 
             return events.filter(el => el != null);
@@ -70,6 +67,10 @@ module.exports = class EDT {
     }
 }
 
+function getEnseignant(description) {
+    return !description.length ? '' : description[description.length - 3];
+}
+
 function getValue(item, value) {
     return item.getFirstPropertyValue(value);
 }
@@ -77,6 +78,7 @@ function getValue(item, value) {
 function hasValue(item) {
     return !!getValue(item, 'summary') &&
         !!getValue(item, 'description') &&
+        !!getValue(item, 'location') &&
         !!getValue(item, 'dtstart') &&
         !!getValue(item, 'dtend');
 }

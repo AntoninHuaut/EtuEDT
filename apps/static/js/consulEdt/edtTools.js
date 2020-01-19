@@ -44,7 +44,7 @@ function defaultView() {
 function getDateWFormat(jsDate) {
     let mom = moment(new Date(jsDate));
     let date = mom.format("HH");
-    date += mom.format("mm") == "00" ? ' h' : ':' + mom.format("mm");
+    date += mom.format("mm") == "00" ? 'h' : ':' + mom.format("mm");
 
     return date;
 }
