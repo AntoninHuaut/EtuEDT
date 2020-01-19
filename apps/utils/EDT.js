@@ -68,7 +68,21 @@ module.exports = class EDT {
 }
 
 function getEnseignant(description) {
-    return !description.length ? '' : description[description.length - 3];
+    const length = description.length;
+    let firstLoop = true;
+    let index = 3;
+    let maxLength = 6;
+
+    while (index < length && description[index - 1].startsWith("GRP_")) {
+        index += firstLoop ? 1 : 2;
+        maxLength += firstLoop ? 1 : 2;
+
+        firstLoop = false;
+    }
+
+    if (length != maxLength || index >= length) return '';
+
+    return description[index];
 }
 
 function getValue(item, value) {
