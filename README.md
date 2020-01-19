@@ -2,7 +2,7 @@
 A Node.js app using [Express 4](http://expressjs.com/) and [FullCalendar v4](https://fullcalendar.io/).
 
 ## Getting Started
-This application was created to quickly access the timetables of the University of Caen via the Zimbra service.  
+This application was created to quickly access the timetables of the University of Caen via the ADE service.  
 [*Application demo*](https://edt.maner.fr/ "Application demo")
 
 ## Running Locally
