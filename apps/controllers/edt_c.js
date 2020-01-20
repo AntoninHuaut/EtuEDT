@@ -17,7 +17,7 @@ exports.showEDT = async function (req, res) {
     let item = cache.filter(item => item.edtId == edtID);
     if (!item || item.length == 0) return res.redirect('/');
 
-    if (!req.session.edtID) req.session.edtID = edtID;
+    req.session.edtID = edtID;
 
     let time = moment(item[0].lastUpdate);
 
