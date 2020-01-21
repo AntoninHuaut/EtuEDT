@@ -5,8 +5,6 @@ const config = require('../config');
 const sql = require('../sql');
 const EDT = require('./EDT');
 
-const NB_WEEKS = 52;
-
 module.exports = class EDTCache {
     constructor() {
         require('../checkConfig')();
@@ -79,13 +77,19 @@ module.exports = class EDTCache {
 }
 
 function requestEdt(edtSql) {
-    const url = edtSql.adeEta.replace("{resources}", edtSql.resources).replace("{projectId}", edtSql.projectId).replace("{nbWeeks}", NB_WEEKS);
+    const firstYear = moment().startOf('year');
+    const firstDate = firstYear.format('YYYY-MM-DD');
+    const lastDate = firstYear.add('6', 'M').format('YYYY-MM-DD');
+
     const params = new URLSearchParams({
+        resources: edtSql.resources,
+        projectId: edtSql.projectId,
         calType: 'ical',
-        nbWeeks: NB_WEEKS
+        firstDate: firstDate,
+        lastDate: lastDate
     });
 
-    return fetch(url + '&' + params).then(res => res.text());
+    return fetch(edtSql.adeEta + '?' + params).then(res => res.text());
 }
 
 function convertString(str) {
