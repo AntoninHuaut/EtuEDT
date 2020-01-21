@@ -77,9 +77,13 @@ module.exports = class EDTCache {
 }
 
 function requestEdt(edtSql) {
-    const firstYear = moment().startOf('year');
-    const firstDate = firstYear.format('YYYY-MM-DD');
-    const lastDate = firstYear.add('6', 'M').format('YYYY-MM-DD');
+    const startYear = moment().startOf('year');
+
+    if (moment().isAfter(startYear.clone().add('6', 'M')))
+        startYear.add('6', 'M');
+
+    const firstDate = startYear.format('YYYY-MM-DD');
+    const lastDate = startYear.add('6', 'M').format('YYYY-MM-DD');
 
     const params = new URLSearchParams({
         resources: edtSql.resources,
