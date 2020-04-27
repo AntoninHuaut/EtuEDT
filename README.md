@@ -7,7 +7,6 @@ This application was created to quickly access the timetables of the University 
 
 ## Running Locally
 > The use of the application requires changes in the code  
-> Timetables must be shared with the main account used
 
 ```shell
 $ git clone https://github.com/Manerr/EtuEDT.git && cd EtuEDT/
