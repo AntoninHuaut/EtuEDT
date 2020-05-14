@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const base_c = require('../controllers/base_c');
 const edtManage = require('../utils/edtManage');
+const cors = require('cors')
 
 router.use(express.static('apps/static'));
 
@@ -18,10 +19,10 @@ router.use((req, res, next) => {
 });
 
 router.use("/", require("./base"));
-router.use("/toggleTheme", require("./toggleTheme"));
-router.use("/data", require("./data"));
+router.use("/toggleTheme", cors(), require("./toggleTheme"));
+router.use("/data", cors(), require("./data"));
 router.use("/faq", require("./faq"));
-router.use("/option", require("./option"));
+router.use("/option", cors(), require("./option"));
 
 router.use((req, res, next) => {
     if (!Array.isArray(edtManage.getAll())) return res.redirect('/');
