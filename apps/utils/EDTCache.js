@@ -40,7 +40,7 @@ module.exports = class EDTCache {
 
                 Promise.all(rqList)
                     .then(res => {
-                        res = res.map(res => convertString(res));
+                        res = res.map(subRes => convertString(subRes));
                         this.updateEdt(edtList, res);
                     })
                     .catch(err => console.error(now(), "[Catch]", err));
@@ -54,7 +54,7 @@ module.exports = class EDTCache {
 
         for (let i = 0; i < res.length; i++) {
             ignoreOldEntries.push(edtList[i].resources);
-            let item = cacheRefresh.find(item => item.edtId == edtList[i].resources);
+            let item = cacheRefresh.find(subItem => subItem.edtId == edtList[i].resources);
 
             if (!!item) {
                 if (!res[i].includes('HTTP ERROR')) {

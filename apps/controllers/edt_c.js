@@ -1,5 +1,5 @@
 const edtManage = require('../utils/edtManage');
-const moment = require('moment');;
+const moment = require('moment');
 
 exports.edtData = async function (req, res) {
     let edtID = req.params.edtID || req.session.edtID || null;
@@ -14,7 +14,7 @@ exports.showEDT = async function (req, res) {
     let edtID = req.params.edtID || req.session.edtID;
     const cache = edtManage.getAll();
 
-    let item = cache.filter(item => item.edtId == edtID);
+    let item = cache.filter(subItem => subItem.edtId == edtID);
     if (!item || item.length == 0) return res.redirect('/');
 
     req.session.edtID = edtID;

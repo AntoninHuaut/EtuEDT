@@ -18,7 +18,7 @@ module.exports = async function (req, res) {
     if (!edtID)
         return res.send(cacheUse);
 
-    let item = cacheUse.filter(item => item.edtId == edtID);
+    let item = cacheUse.filter(subItem => subItem.edtId == edtID);
     if (item.length == 0)
         return res.send({
             "error": `edtId ${edtID} does not exist`

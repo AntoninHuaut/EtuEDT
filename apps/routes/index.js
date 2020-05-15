@@ -19,10 +19,10 @@ router.use((req, res, next) => {
 });
 
 router.use("/", require("./base"));
-router.use("/toggleTheme", cors(), require("./toggleTheme"));
+router.use("/toggleTheme", require("./toggleTheme"));
 router.use("/data", cors(), require("./data"));
 router.use("/faq", require("./faq"));
-router.use("/option", cors(), require("./option"));
+router.use("/option", require("./option"));
 
 router.use((req, res, next) => {
     if (!Array.isArray(edtManage.getAll())) return res.redirect('/');
